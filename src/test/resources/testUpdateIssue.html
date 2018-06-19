@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+function submitValues() {
+	const myRequest = new Request('http://localhost:8080/v1/createIssue', {method: 'POST', body: '{"foo":"bar"}'})
+	
+	fetch(myRequest)
+	  .then(response => {
+	    if (response.status === 200) {
+	      return response.json();
+	    } else {
+	      throw new Error('Something went wrong on api server!');
+	    }
+	  })
+	  .then(response => {
+	    console.debug(response);
+	    // ...
+	  }).catch(error => {
+	    console.error(error);
+	  });
+  }
+
+</script>
+
+<h2>Test update issue</h2>
+
+<form action="http://localhost:8080/v1/updateIssue" method="post">
+  <br> Issue Id: <input type="text" name="id" value="1">
+  <br> Assignee ID: <input type="text" name="assignee" value="1">
+  <br> ReporterID: <input type="text" name="reporter" value="1">
+  <br> Title: <input type="text" name="title">
+  <br>
+  Description:<br>
+   <textarea rows="4" cols="50" name="description">
+  </textarea>
+  <br><br>
+  <input type="submit" value="Submit">
+</form> 
+
+</body>
+</html>
