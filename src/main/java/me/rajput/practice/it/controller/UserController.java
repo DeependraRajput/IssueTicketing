@@ -1,6 +1,7 @@
 package me.rajput.practice.it.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -63,13 +64,13 @@ public class UserController {
 	}
 	
 	/**
-	 * Method called to search a user based on login name.
-	 * @param loginId
+	 * Method called to search a list of user based on user values.
+	 * @param user values
 	 * @return
 	 */
 	@RequestMapping("/searchUser")
-	public UserDto searchUser(@ModelAttribute UserDto newUser) {
-		return service.searchUser(newUser);
+	public List<UserDto> searchUser(@ModelAttribute UserDto values) {
+		return service.searchUsers(values);
 	}
 	
 	/**
