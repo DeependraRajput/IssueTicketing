@@ -36,6 +36,6 @@ public interface IssueRepository extends CrudRepository<Issue, Long> {
 	 * @param pageable
 	 * @return
 	 */
-	List<Issue> findIssueByCreatedBetween(Date startDate, Date endDate, Pageable pageable);
+	List<Issue> findIssueByCreatedAtBetween(Date startDate, Date endDate, Pageable pageable);
 	
 }

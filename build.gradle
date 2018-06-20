@@ -1,5 +1,5 @@
 ext {
-    springBootVersion = '1.5.4.RELEASE'
+    springBootVersion = '2.0.3.RELEASE'
 }
 
 buildscript {
@@ -9,7 +9,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE"
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
@@ -28,6 +28,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-devtools"
     compile "org.springframework.boot:spring-boot-starter-jdbc"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    //compile "org.springframework.boot:spring-boot-starter-security" //To use BCryptPasswordEncoder.
     compile "org.flywaydb:flyway-core"
     compile "org.projectlombok:lombok"
     compile "org.modelmapper:modelmapper:2.0.0"

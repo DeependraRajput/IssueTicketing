@@ -10,19 +10,21 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import me.rajput.practice.it.exceptions.LoginFailedException;
 import me.rajput.practice.it.model.UserType;
 import me.rajput.practice.it.model.db.User;
+import me.rajput.practice.it.model.db.UserSecurity;
 import me.rajput.practice.it.model.dto.UserDto;
 import me.rajput.practice.it.repositories.UserRepository;
+import me.rajput.practice.it.repositories.UserSecurityRepository;
 
 /**
- * Description: 
+ * Description: Service to provide all features for user accessibility and operations. 
  * 
  * @author Deependra Rajput
  * @date Jun 17, 2018
@@ -34,13 +36,20 @@ public class UserServiceImpl implements UserService {
 	private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
 	
 	@Autowired
-	private UserRepository repository;
+	private UserRepository userRepo;
+	
+	@Autowired
+	private UserSecurityRepository secRepo;
 	
 	@Autowired
 	private ModelMapper modelMapper;
 	
 	@Autowired
 	private PasswordManager passwordManager;
+	
+	@Autowired
+	@Qualifier("currentUser")
+	private UserDto currentUser;
 
 	/* (non-Javadoc)
 	 * @see me.rajput.practice.it.services.UserService#login(java.lang.String, java.lang.String)
@@ -51,22 +60,41 @@ public class UserServiceImpl implements UserService {
 		Assert.notNull(loginId, "Login Id must not be null!");
 		Assert.notNull(password, "Password must not be null!");
 		
-		//Question: Should the password be fetched in to the JVM like this? 
-		User user = repository.findByLoginId(loginId);
-		if(user != null && passwordManager.getEncryptedPassword(password).equals(user.getPassword())) {
-			return modelMapper.map(user, UserDto.class);
+		User user = userRepo.findByLoginId(loginId);
+		if(user != null) {
+			UserSecurity userSec = secRepo.findOne(user.getId());
+			if(userSec == null || passwordManager.getEncryptedPassword(password).equals(userSec.getPassword())) {
+				modelMapper.map(user, this.currentUser);
+				LOGGER.info(user.getFirstName() + " " + user.getLastName() + "["+ user.getLoginId()+"] has successfully logged into the system");
+				return this.currentUser.clone();
+			}
 		}
 		
 		throw new LoginFailedException("Invalid Credentials!");
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.UserService#logout()
+	 */
+	@Override
+	public void logout() {
+		
+		UserDto currentUser = this.currentUser();
+		UserDto user = currentUser.clone();
+		
+		modelMapper.map(new UserDto(), currentUser);
+		currentUser.setType(UserType.INVALID);
+		
+		LOGGER.info(user.getFirstName() + " " + user.getLastName() + "["+ user.getLoginId()+"] has successfully logged out of the system");
 	}
 
 	/* (non-Javadoc)
 	 * @see me.rajput.practice.it.services.UserService#addUser(me.rajput.practice.it.model.dto.UserDto)
 	 */
 	@Override
-	public UserDto addUser(UserDto actor, UserDto newUserDto) {
+	public UserDto addUser(UserDto newUserDto) {
 		
-		Assert.isTrue(isCurrentUserAdmin(actor), "Current user must be an Admin");
+		Assert.isTrue(isCurrentUserAdmin(), "Current user must be an Admin");
 		
 		Assert.notNull(newUserDto, "Details must not be null!");
 		Assert.notNull(newUserDto.getLoginId(), "Login Id must not be null!");
@@ -78,10 +106,11 @@ public class UserServiceImpl implements UserService {
 			newUser.setType(UserType.USER);
 		
 		Date currentDate = new Date();
-		newUser.setCreatedAt(currentDate);
 		newUser.setUpdatedAt(currentDate);
 		
-		repository.save(newUser);
+		userRepo.save(newUser);
+		
+		LOGGER.info(newUser.getFirstName() + " " + newUser.getLastName() + "["+ newUser.getLoginId()+"] has successfully been added to the system");
 		
 		return newUserDto;
 	}
@@ -90,19 +119,27 @@ public class UserServiceImpl implements UserService {
 	 * @see me.rajput.practice.it.services.UserService#resetPassword(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean resetPassword(UserDto actor, String oldPassword, String newPassword) {
+	public boolean resetPassword(String oldPassword, String newPassword) {
 		
 		boolean isSuccess = false;
+		UserDto actor = this.currentUser();
 		if(actor != null) {
-			User user = repository.findByLoginId(actor.getLoginId());
-			if(StringUtils.isEmpty(user.getPassword()) || user.getPassword().equals(passwordManager.getEncryptedPassword(oldPassword))) {
-				if(passwordManager.checkPasswordStrength(newPassword)) {
-					user.setPassword(passwordManager.getEncryptedPassword(newPassword));
-					repository.save(user);
-					isSuccess = true;
+			User user = userRepo.findByLoginId(actor.getLoginId());
+			if(user != null) {
+				UserSecurity userSec = secRepo.findOne(user.getId());
+				if(userSec == null || 
+						userSec.getPassword().equals(passwordManager.getEncryptedPassword(oldPassword))) {
+					if(passwordManager.checkPasswordStrength(newPassword)) {
+						userSec.setPassword(passwordManager.getEncryptedPassword(newPassword));
+						secRepo.save(userSec);
+						isSuccess = true;
+					}
 				}
 			}
 		}
+
+		LOGGER.info("Password change for {" + actor.getFirstName() + " " + actor.getLastName() + "["+ actor.getLoginId()+"]} has " + (isSuccess?"been successful":"failed"));
+		
 		return isSuccess;
 	}
 
@@ -113,7 +150,7 @@ public class UserServiceImpl implements UserService {
 	public List<UserDto> searchUsers(UserDto user) {
 		Example<User> example = null;
 		// TODO : What should be the criteria.
-		List<User> allUsers = repository.findAll(example);
+		List<User> allUsers = userRepo.findAll(example);
 		
 		return allUsers == null? null: allUsers.stream()
 				.map(u->modelMapper.map(u, UserDto.class))
@@ -121,19 +158,20 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.UserService#deleteUser(me.rajput.practice.it.model.dto.UserDto, java.lang.String)
+	 * @see me.rajput.practice.it.services.UserService#deleteUser(java.lang.String)
 	 */
 	@Override
-	public boolean deleteUser(UserDto actor, String loginId) {
+	public boolean deleteUser(String loginId) {
 		
-		Assert.isTrue(isCurrentUserAdmin(actor), "Current user must be an Admin");
+		Assert.isTrue(isCurrentUserAdmin(), "Current user must be an Admin");
 		
 		boolean isSuccess = false;
 		try {
-			User user = repository.findByLoginId(loginId);
+			User user = userRepo.findByLoginId(loginId);
 			if(user != null && user.getId() != null) {
-				repository.findByLoginId(loginId);
+				userRepo.findByLoginId(loginId);
 				isSuccess = true;
+				LOGGER.error("User with Login Id ["+loginId+"] has been deleted successfully.");
 			}
 		} catch(Exception e) {
 			LOGGER.error("Unable to delete the user with Login Id ["+loginId+"]");
@@ -143,20 +181,20 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.UserService#updateUserType(me.rajput.practice.it.model.dto.UserDto, java.lang.String, me.rajput.practice.it.model.UserType)
+	 * @see me.rajput.practice.it.services.UserService#updateUserType(java.lang.String, me.rajput.practice.it.model.UserType)
 	 */
 	@Override
-	public boolean updateUserType(UserDto actor, String loginId, UserType type) {
+	public boolean updateUserType(String loginId, UserType type) {
 		
-		Assert.isTrue(isCurrentUserAdmin(actor), "Current user must be an Admin");
+		Assert.isTrue(isCurrentUserAdmin(), "Current user must be an Admin");
 		
 		boolean isSuccess = false;
 		try {
-			User user = repository.findByLoginId(loginId);
+			User user = userRepo.findByLoginId(loginId);
 			if(user != null && user.getId() != null) {
 				user.setType(type);
 				user.setUpdatedAt(new Date());
-				repository.save(user);
+				userRepo.save(user);
 				isSuccess = true;
 			}
 		} catch(Exception e) {
@@ -166,14 +204,23 @@ public class UserServiceImpl implements UserService {
 		return isSuccess;
 	}
 	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.UserService#currentUser()
+	 */
+	@Override
+	public UserDto currentUser() {
+		return UserType.INVALID.equals(this.currentUser.getType())? null: this.currentUser;
+	}
+	
 	/**
 	 * Checks is the user is Admin or not.
 	 * @param userDto
 	 * @return
 	 */
-	private boolean isCurrentUserAdmin(UserDto userDto) {
-		return userDto != null && UserType.ADMIN.equals(userDto.getType());
+	private boolean isCurrentUserAdmin() {
+		return currentUser() != null && UserType.ADMIN.equals(currentUser().getType());
 	}
+
 
 
 }

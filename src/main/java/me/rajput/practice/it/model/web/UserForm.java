@@ -1,4 +1,6 @@
-package me.rajput.practice.it.model.dto;
+package me.rajput.practice.it.model.web;
+
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -10,9 +12,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.rajput.practice.it.model.UserType;
 
+/**
+ * 
+ * Description: Data model representing a user on the web page. 
+ * 
+ * @author Deependra Rajput
+ * @date Jun 14, 2018
+ *
+ */
 @Data
 @EqualsAndHashCode(of="loginId")
-public class UserDto implements Cloneable {
+public class UserForm {
 	
 	@NotBlank
 	@Pattern(regexp = "[a-z]+\\d*")
@@ -36,11 +46,7 @@ public class UserDto implements Cloneable {
     @NotNull
     private UserType type;
     
-    @Override
-    public UserDto clone() {
-    	try {
-			return (UserDto)super.clone();
-		} catch (CloneNotSupportedException willNotOccur) {}
-		return null;
-    }
+    @NotNull
+    private Date updatedAt;
+
 }

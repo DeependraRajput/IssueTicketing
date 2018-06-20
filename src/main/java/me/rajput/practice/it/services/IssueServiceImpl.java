@@ -28,8 +28,8 @@ public class IssueServiceImpl implements IssueService {
 
 	@Override
 	public Issue saveIssue(Issue issue) {
-		if(issue.getCreated() == null) {
-			issue.setCreated(new Date());
+		if(issue.getCreatedAt() == null) {
+			issue.setCreatedAt(new Date());
 		}
 		if(issue.getStatus() == null || issue.getId() == null) {
 			issue.setStatus(IssueStatus.NEW);
@@ -79,6 +79,6 @@ public class IssueServiceImpl implements IssueService {
 	public List<Issue> findIssues(Date startDate, Date endDate, Pageable pageable) {
 		Assert.notNull(startDate, "Start date must not be blank");
 		Assert.notNull(endDate, "Etart date must not be blank");
-		return repository.findIssueByCreatedBetween(startDate, endDate, pageable);
+		return repository.findIssueByCreatedAtBetween(startDate, endDate, pageable);
 	}
 }

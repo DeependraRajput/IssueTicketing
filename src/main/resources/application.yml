@@ -21,4 +21,4 @@ spring:
       ddl-auto: none
       
 password:
-  regexes: .*[A-Z]+.*:.*[a-z]+.*:.*[0-9]+.*:.*[\\W]+.*
+  regexes: .*[A-Z]+.*:.*[a-z]+.*:.*[0-9]+.*:.*[\\W]+.*:.{8,12}

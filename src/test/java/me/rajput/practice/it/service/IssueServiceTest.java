@@ -74,7 +74,7 @@ public class IssueServiceTest extends TestBase {
 		
 		Assert.assertNotNull("Issue Id returned is null", issue.getId());
 		Assert.assertNotNull("Issue status returned is null", issue.getStatus());
-		Assert.assertNotNull("Issue created date returned is null", issue.getCreated());
+		Assert.assertNotNull("Issue created date returned is null", issue.getCreatedAt());
 		Assert.assertEquals("Issue Title does not match", "Test Title", issue.getTitle());
 		Assert.assertEquals("Issue Description does not match", "Test Description", issue.getDescription());
 	}
@@ -114,7 +114,7 @@ public class IssueServiceTest extends TestBase {
 		
 		Assert.assertNotNull("Issue Id returned is null", issue.getId());
 		Assert.assertNotNull("Issue status returned is null", issue.getStatus());
-		Assert.assertNotNull("Issue created date returned is null", issue.getCreated());
+		Assert.assertNotNull("Issue created date returned is null", issue.getCreatedAt());
 		Assert.assertEquals("Issue Title does not match", "Test Update Title", issue.getTitle());
 		Assert.assertEquals("Issue Description does not match", "Test Update Description", issue.getDescription());
 		Assert.assertEquals("Issue Status does not match", IssueStatus.CLOSED, issue.getStatus());

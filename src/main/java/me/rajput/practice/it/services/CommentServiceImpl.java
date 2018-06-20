@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public List<Comment> getCommentsByIssue(Long issueId) {
-		return repository.findCommentByIssue(issueId);
+		return repository.findCommentByIssueId(issueId);
 	}
 
 }

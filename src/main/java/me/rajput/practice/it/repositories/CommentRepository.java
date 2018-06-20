@@ -16,6 +16,6 @@ import me.rajput.practice.it.model.db.Comment;
  */
 public interface CommentRepository extends CrudRepository<Comment, Long>{
 	
-	List<Comment> findCommentByIssue(Long issueId);
+	List<Comment> findCommentByIssueId(Long issueId);
 
 }

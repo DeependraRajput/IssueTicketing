@@ -1,12 +1,10 @@
-package me.rajput.practice.it.model.db;
+package me.rajput.practice.it.model.web;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,7 +15,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 
- * Description: Data model representing a comment on an issue in the database. 
+ * Description: Data model representing a comment on an issue on the web page. 
  * 
  * @author Deependra Rajput
  * @date Jun 14, 2018
@@ -25,9 +23,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(of="id")
-@Entity
-@Table(name="COMMENT", schema="TICKETING")
-public class Comment {
+public class CommentForm {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +36,8 @@ public class Comment {
 	@Size(max = 255)
 	private String text;
 	
-	@NotNull
 	private Long commentator; //Use actual User by @ManyToOne mapping.
 	
-	@NotNull
 	private Date created;
 
 }

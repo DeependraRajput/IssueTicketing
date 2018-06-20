@@ -37,7 +37,7 @@ public class CommentServiceTest extends TestBase {
 		
 		Comment newComment = new Comment();
 		newComment.setCommentator(1L);
-		newComment.setIssue(newIssue.getId());
+		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
 		
@@ -77,7 +77,7 @@ public class CommentServiceTest extends TestBase {
 		
 		Comment newComment = new Comment();
 		newComment.setCommentator(1L);
-		newComment.setIssue(newIssue.getId());
+		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
 		
@@ -107,7 +107,7 @@ public class CommentServiceTest extends TestBase {
 		
 		Comment newComment = new Comment();
 		newComment.setCommentator(1L);
-		newComment.setIssue(newIssue.getId());
+		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
 		
@@ -138,7 +138,7 @@ public class CommentServiceTest extends TestBase {
 		
 		Comment newComment = new Comment();
 		newComment.setCommentator(1L);
-		newComment.setIssue(newIssue.getId());
+		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
 		

@@ -24,21 +24,25 @@ public interface UserService {
 	UserDto login(String loginId, String password);
 	
 	/**
+	 * Logs out the current user.
+	 * @return
+	 */
+	void logout();
+	
+	/**
 	 * Add a new user with the given attributes. (By Admin user only).
-	 * @param actor
 	 * @param newUserDto
 	 * @return
 	 */
-	UserDto addUser(UserDto actor, UserDto newUserDto);
+	UserDto addUser(UserDto newUserDto);
 	
 	/**
 	 * Reset the password of the currently logged in user.
-	 * @param actor
 	 * @param oldPassword
 	 * @param newPassword
 	 * @return
 	 */
-	boolean resetPassword(UserDto actor, String oldPassword, String newPassword);
+	boolean resetPassword(String oldPassword, String newPassword);
 	
 	/**
 	 * Find all users based on the given criteria.	
@@ -49,19 +53,23 @@ public interface UserService {
 	
 	/**
 	 * Delete the user for given login id. (By Admin user only.)
-	 * @param actor
 	 * @param loginId
 	 * @return
 	 */
-	boolean deleteUser(UserDto actor, String loginId);
+	boolean deleteUser(String loginId);
 	
 	/**
 	 * User user type of the user for given login id. (By Admin user only.)
-	 * @param actor
 	 * @param loginId
 	 * @param type
 	 * @return
 	 */
-	boolean updateUserType(UserDto actor, String loginId, UserType type);
+	boolean updateUserType(String loginId, UserType type);
+	
+	/**
+	 * Provided the current user of the session.
+	 * @return
+	 */
+	UserDto currentUser();
 
 }

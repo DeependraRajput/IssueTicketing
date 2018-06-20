@@ -1,4 +1,4 @@
-package me.rajput.practice.it.model.db;
+package me.rajput.practice.it.model.web;
 
 import java.util.Date;
 
@@ -20,7 +20,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 
- * Description: Data model representing an issue in the database. 
+ * Description: Data model representing an issue on the web page. 
  * 
  * @author Deependra Rajput
  * @date Jun 14, 2018
@@ -30,7 +30,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of="id")
 @Entity
 @Table(name = "ISSUE", schema="TICKETING")
-public class Issue {
+public class IssueForm {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,9 +53,9 @@ public class Issue {
 	private Long assignee;  //Use User object by @ManyToOne mapping.
 	
 	@NotNull
-	private Date createdAt;
+	private Date created;
 	
 	@NotNull
-	private Date completedAt;
+	private Date completed;
 
 }

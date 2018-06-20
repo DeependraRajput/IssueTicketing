@@ -3,18 +3,20 @@ package me.rajput.practice.it.controller;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
-import me.rajput.practice.it.model.UserType;
 import me.rajput.practice.it.model.dto.UserDto;
 import me.rajput.practice.it.services.UserService;
 
@@ -32,7 +34,7 @@ public class UserController {
 	private UserService service;
 	
 	/**
-	 * Initialize the data conversion for Date to String with given format.
+	 * Initialise the data conversion for Date to String with given format.
 	 * @param binder
 	 */
     @InitBinder
@@ -41,16 +43,35 @@ public class UserController {
     }
 	
     /**
+     * Method called to login to the system with credentials and initialise a session until log-out.
+     * @param newUser
+     * @return
+     */
+	@RequestMapping(path = "/login", method = RequestMethod.POST)
+	public UserDto login(@RequestParam String loginId, @RequestParam String password) {
+		
+		if(loginId.matches(".*\\W.*")) throw new IllegalArgumentException("Illegal characters found in the lognId");
+		return service.login(loginId, password);
+	}
+	
+    /**
+     * Method called to login to the system with credentials.
+     * @param newUser
+     * @return
+     */
+	@RequestMapping("/logout")
+	public void logout() {
+		service.logout();
+	}
+	
+    /**
      * Method called to add a new user to the system.
-     * TODO: Search how to check all the input parameters before passing on to the service. like AOP.
      * @param newUser
      * @return
      */
 	@RequestMapping("/addUser")
-	public UserDto createUser(@ModelAttribute UserDto newUser) {
-		
-		if(newUser.getLoginId().matches(".*\\W.*")) throw new IllegalArgumentException("Illegal characters found in the lognId");
-		return service.addUser(getCurrentUser(), newUser);
+	public UserDto createUser(@Valid @ModelAttribute UserDto newUser) {
+		return service.addUser(newUser);
 	}
 
 	/**
@@ -60,7 +81,7 @@ public class UserController {
 	 */
 	@RequestMapping("/deleteUser")
 	public boolean deleteUser(@RequestParam String loginId) {
-		return service.deleteUser(getCurrentUser(), loginId);
+		return service.deleteUser(loginId);
 	}
 	
 	/**
@@ -73,16 +94,4 @@ public class UserController {
 		return service.searchUsers(values);
 	}
 	
-	/**
-	 * Gets the current user of the request.
-	 * TODO: Learn authentication with spring boot.
-	 * @return
-	 */
-	private UserDto getCurrentUser() {
-		UserDto user = new UserDto();
-		user.setType(UserType.ADMIN);
-		
-		return user;
-	}
-
 }

@@ -41,6 +41,10 @@ public class User {
 	private String loginId;
     
     @NotNull
+    @Size(min = 3, max = 25)
+    private String email;
+    
+    @NotNull
     @Size(min = 1, max = 15)
     private String firstName;
     
@@ -54,11 +58,6 @@ public class User {
     @NotNull
     @Enumerated(EnumType.STRING)
     private UserType type;
-    
-    private String password;
-    
-    @NotNull
-    private Date createdAt;
     
     @NotNull
     private Date updatedAt;
