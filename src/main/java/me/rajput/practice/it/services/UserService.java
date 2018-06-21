@@ -3,7 +3,7 @@ package me.rajput.practice.it.services;
 import java.util.List;
 
 import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.dto.UserDto;
+import me.rajput.practice.it.model.User;
 
 /**
  * 
@@ -21,7 +21,7 @@ public interface UserService {
 	 * @param password
 	 * @return
 	 */
-	UserDto login(String loginId, String password);
+	User login(String loginId, String password);
 	
 	/**
 	 * Logs out the current user.
@@ -31,10 +31,10 @@ public interface UserService {
 	
 	/**
 	 * Add a new user with the given attributes. (By Admin user only).
-	 * @param newUserDto
+	 * @param newUser
 	 * @return
 	 */
-	UserDto addUser(UserDto newUserDto);
+	User addUser(User newUser);
 	
 	/**
 	 * Reset the password of the currently logged in user.
@@ -49,7 +49,7 @@ public interface UserService {
 	 * @param params
 	 * @return
 	 */
-	List<UserDto> searchUsers(UserDto user);
+	List<User> searchUsers(User user);
 	
 	/**
 	 * Delete the user for given login id. (By Admin user only.)
@@ -70,6 +70,6 @@ public interface UserService {
 	 * Provided the current user of the session.
 	 * @return
 	 */
-	UserDto currentUser();
+	User currentUser();
 
 }

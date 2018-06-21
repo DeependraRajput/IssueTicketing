@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.db.Issue;
+import me.rajput.practice.it.model.Issue;
 
 /**
  * Interface defining the APIs to provided by the service on issues.

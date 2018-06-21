@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
-import me.rajput.practice.it.model.dto.UserDto;
+import me.rajput.practice.it.model.User;
 import me.rajput.practice.it.services.UserService;
 
 /**
@@ -47,8 +47,8 @@ public class UserController {
      * @param newUser
      * @return
      */
-	@RequestMapping(path = "/login", method = RequestMethod.POST)
-	public UserDto login(@RequestParam String loginId, @RequestParam String password) {
+	@RequestMapping(path = "/login", method = RequestMethod.GET)
+	public User login(@RequestParam String loginId, @RequestParam String password) {
 		
 		if(loginId.matches(".*\\W.*")) throw new IllegalArgumentException("Illegal characters found in the lognId");
 		return service.login(loginId, password);
@@ -70,7 +70,7 @@ public class UserController {
      * @return
      */
 	@RequestMapping("/addUser")
-	public UserDto createUser(@Valid @ModelAttribute UserDto newUser) {
+	public User createUser(@Valid @ModelAttribute User newUser) {
 		return service.addUser(newUser);
 	}
 
@@ -89,8 +89,8 @@ public class UserController {
 	 * @param user values
 	 * @return
 	 */
-	@RequestMapping("/searchUser")
-	public List<UserDto> searchUser(@ModelAttribute UserDto values) {
+	@RequestMapping("/searchUsers")
+	public List<User> searchUser(@ModelAttribute User values) {
 		return service.searchUsers(values);
 	}
 	

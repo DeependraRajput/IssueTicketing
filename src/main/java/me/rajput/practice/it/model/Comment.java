@@ -1,16 +1,23 @@
-package me.rajput.practice.it.model.db;
+package me.rajput.practice.it.model;
 
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,7 +33,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of="id")
 @Entity
-@Table(name="COMMENT", schema="TICKETING")
+@Table(name="COMMENT")
+@EntityListeners(AuditingEntityListener.class)
 public class Comment {
 	
 	@Id
@@ -37,13 +45,21 @@ public class Comment {
 	private Long issueId;
 	
 	@NotBlank
-	@Size(max = 255)
+	@Size(min = 1, max = 4096)
+	@Pattern(regexp = "^((?!<script>.*</script>).)*$") //Must not contain an HTML script tag.
 	private String text;
 	
 	@NotNull
-	private Long commentator; //Use actual User by @ManyToOne mapping.
+	private Long commentator; //Should use actual User by @ManyToOne mapping or not?
 	
 	@NotNull
-	private Date created;
+	@CreatedDate
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdAt;
+	
+	@NotNull
+	@LastModifiedDate
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastModifiedAt;
 
 }

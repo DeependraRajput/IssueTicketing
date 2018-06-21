@@ -1,0 +1,3 @@
+2018-06-21 20:34:23 jdbc[12]: exception
+org.h2.jdbc.JdbcSQLException: Table "USER" not found; SQL statement:
+select user0_.id as id1_3_, user0_.email as email2_3_, user0_.first_name as first_na3_3_, user0_.last_name as last_nam4_3_, user0_.login_id as login_id5_3_, user0_.middle_name as middle_n6_3_, user0_.type as type7_3_, user0_.updated_at as updated_8_3_ from user user0_ where user0_.last_name=? [42102-195]

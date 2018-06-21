@@ -4,6 +4,9 @@ server:
 
 
 spring:
+  flyway:
+    schemas: TICKETING
+    
   h2:
     console:
       enabled: true
@@ -13,12 +16,21 @@ spring:
     url: jdbc:h2:file:./rajput-ticket-db
     username: sa
     password:
+    #schema: TICKETING //This will not work since the flyway is executed on the database connection, hence connection is initialized first.
     driver-class-name: org.h2.Driver
     
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
+      format-sql: true
+      
+      
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    
+#spring.data.web.pageable.default-page-size=20 # Default page size.
+#spring.data.web.sort.sort-parameter=sort
       
 password:
   regexes: .*[A-Z]+.*:.*[a-z]+.*:.*[0-9]+.*:.*[\\W]+.*:.{8,12}

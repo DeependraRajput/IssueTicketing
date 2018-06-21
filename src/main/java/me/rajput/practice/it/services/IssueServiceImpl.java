@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.db.Issue;
-import me.rajput.practice.it.model.db.User;
+import me.rajput.practice.it.model.Issue;
+import me.rajput.practice.it.model.User;
 import me.rajput.practice.it.repositories.IssueRepository;
 import me.rajput.practice.it.repositories.UserRepository;
 

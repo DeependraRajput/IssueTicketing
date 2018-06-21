@@ -25,7 +25,7 @@ CREATE TABLE TICKETING.ISSUE (
   status VARCHAR(20) NOT NULL,
   reporter BIGINT NOT NULL,
   assignee BIGINT,
-  created_at DATE NOT NULL,
+  created_at DATETIME NOT NULL,
   completed_at DATE
 );
 
@@ -34,7 +34,8 @@ CREATE TABLE TICKETING.COMMENT (
   issue_id BIGINT NOT NULL,
   text VARCHAR(255) NOT NULL,
   commentator BIGINT NOT NULL,
-  created DATE NOT NULL
+  created_at DATETIME NOT NULL,
+  last_modified_at DATETIME
 );
 
 ALTER TABLE TICKETING.USER_SECURITY

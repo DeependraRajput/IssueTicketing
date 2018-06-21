@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.db.Issue;
+import me.rajput.practice.it.model.Issue;
 import me.rajput.practice.it.services.IssueService;
 
 /**

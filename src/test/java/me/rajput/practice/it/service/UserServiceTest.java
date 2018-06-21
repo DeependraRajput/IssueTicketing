@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import me.rajput.practice.it.TestBase;
 import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.dto.UserDto;
+import me.rajput.practice.it.model.User;
 import me.rajput.practice.it.services.UserService;
 
 @Transactional
@@ -19,7 +19,7 @@ public class UserServiceTest extends TestBase {
 	
 	public void testSearchUsers() {
 		
-		UserDto user = new UserDto();
+		User user = new User();
 		user.setLastName("Rajput");
 		service.searchUsers(user);
 		
@@ -28,11 +28,11 @@ public class UserServiceTest extends TestBase {
 	@Test
 	public void testLogin() {
 		
-		UserDto currentUser = service.currentUser();
+		User currentUser = service.currentUser();
 		
 		Assert.assertNull("Current user must be null before login", currentUser.getType());
 		
-		UserDto loggedInUser = service.login("drajput", null);
+		User loggedInUser = service.login("drajput", null);
 		
 		Assert.assertNull("Current user must be null before login", currentUser.getType());
 		

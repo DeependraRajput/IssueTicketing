@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import me.rajput.practice.it.model.db.Comment;
+import me.rajput.practice.it.model.Comment;
 import me.rajput.practice.it.repositories.CommentRepository;
 
 /**
@@ -26,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public Comment writeComment(Comment comment) {
-		comment.setCreated(new Date());
+		comment.setCreatedAt(new Date());
 		comment = repository.save(comment);
 		return comment;
 	}

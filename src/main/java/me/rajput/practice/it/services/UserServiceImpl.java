@@ -3,6 +3,8 @@
  */
 package me.rajput.practice.it.services;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,12 +16,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import me.rajput.practice.it.exceptions.LoginFailedException;
 import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.db.User;
-import me.rajput.practice.it.model.db.UserSecurity;
-import me.rajput.practice.it.model.dto.UserDto;
+import me.rajput.practice.it.model.User;
+import me.rajput.practice.it.model.UserSecurity;
+import me.rajput.practice.it.model.User;
 import me.rajput.practice.it.repositories.UserRepository;
 import me.rajput.practice.it.repositories.UserSecurityRepository;
 
@@ -49,13 +52,13 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	@Qualifier("currentUser")
-	private UserDto currentUser;
+	private User currentUser;
 
 	/* (non-Javadoc)
 	 * @see me.rajput.practice.it.services.UserService#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public UserDto login(String loginId, String password) {
+	public User login(String loginId, String password) {
 		
 		Assert.notNull(loginId, "Login Id must not be null!");
 		Assert.notNull(password, "Password must not be null!");
@@ -79,29 +82,29 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void logout() {
 		
-		UserDto currentUser = this.currentUser();
-		UserDto user = currentUser.clone();
+		User currentUser = this.currentUser();
+		User user = currentUser.clone();
 		
-		modelMapper.map(new UserDto(), currentUser);
+		modelMapper.map(new User(), currentUser);
 		currentUser.setType(UserType.INVALID);
 		
 		LOGGER.info(user.getFirstName() + " " + user.getLastName() + "["+ user.getLoginId()+"] has successfully logged out of the system");
 	}
 
 	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.UserService#addUser(me.rajput.practice.it.model.dto.UserDto)
+	 * @see me.rajput.practice.it.services.UserService#addUser(me.rajput.practice.it.model.User)
 	 */
 	@Override
-	public UserDto addUser(UserDto newUserDto) {
+	public User addUser(User newUser) {
 		
 		Assert.isTrue(isCurrentUserAdmin(), "Current user must be an Admin");
 		
-		Assert.notNull(newUserDto, "Details must not be null!");
-		Assert.notNull(newUserDto.getLoginId(), "Login Id must not be null!");
-		Assert.notNull(newUserDto.getFirstName(), "First name must not be null!");
-		Assert.notNull(newUserDto.getLastName(), "Last name must not be null!");
+		Assert.notNull(newUser, "Details must not be null!");
+		Assert.notNull(newUser.getLoginId(), "Login Id must not be null!");
+		Assert.notNull(newUser.getFirstName(), "First name must not be null!");
+		Assert.notNull(newUser.getLastName(), "Last name must not be null!");
 
-		User newUser = modelMapper.map(newUserDto, User.class);
+		User newUser = modelMapper.map(newUser, User.class);
 		if(newUser.getType() == null)
 			newUser.setType(UserType.USER);
 		
@@ -112,7 +115,7 @@ public class UserServiceImpl implements UserService {
 		
 		LOGGER.info(newUser.getFirstName() + " " + newUser.getLastName() + "["+ newUser.getLoginId()+"] has successfully been added to the system");
 		
-		return newUserDto;
+		return newUser;
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +125,7 @@ public class UserServiceImpl implements UserService {
 	public boolean resetPassword(String oldPassword, String newPassword) {
 		
 		boolean isSuccess = false;
-		UserDto actor = this.currentUser();
+		User actor = this.currentUser();
 		if(actor != null) {
 			User user = userRepo.findByLoginId(actor.getLoginId());
 			if(user != null) {
@@ -144,16 +147,40 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.UserService#searchUsers(me.rajput.practice.it.model.dto.UserDto)
+	 * @see me.rajput.practice.it.services.UserService#searchUsers(me.rajput.practice.it.model.User)
 	 */
 	@Override
-	public List<UserDto> searchUsers(UserDto user) {
-		Example<User> example = null;
-		// TODO : What should be the criteria.
-		List<User> allUsers = userRepo.findAll(example);
+	public List<User> searchUsers(User user) {
+		
+		List<User> allUsers = Collections.<User>emptyList();
+		if(!StringUtils.isEmpty(user.getLoginId())) {
+			User u = userRepo.findByLoginId(user.getLoginId());
+			if(u != null) { 
+				allUsers = Arrays.asList(u);
+			}
+		} else if(!StringUtils.isEmpty(user.getEmail())) {
+			User u = userRepo.findByEmail(user.getEmail());
+			if(u != null) { 
+				allUsers = Arrays.asList(u);
+			}
+		} else if(!StringUtils.isEmpty(user.getFirstName())) {
+			if(!StringUtils.isEmpty(user.getLastName())) {
+				allUsers = userRepo.findByFirstNameAndLastName(user.getFirstName(), user.getLastName());
+			} else {
+				allUsers = userRepo.findByFirstName(user.getFirstName());
+			}
+		} else {
+			if(!StringUtils.isEmpty(user.getLastName())) {
+				allUsers = userRepo.findByLastName(user.getLastName());
+			}
+		}
+		
+		//TODO: How to replace above construct
+		//Example<User> example = null;
+		//List<User> allUsers = userRepo.findAll(example);
 		
 		return allUsers == null? null: allUsers.stream()
-				.map(u->modelMapper.map(u, UserDto.class))
+				.map(u->modelMapper.map(u, User.class))
 				.collect(Collectors.toList());
 	}
 
@@ -208,13 +235,13 @@ public class UserServiceImpl implements UserService {
 	 * @see me.rajput.practice.it.services.UserService#currentUser()
 	 */
 	@Override
-	public UserDto currentUser() {
+	public User currentUser() {
 		return UserType.INVALID.equals(this.currentUser.getType())? null: this.currentUser;
 	}
 	
 	/**
 	 * Checks is the user is Admin or not.
-	 * @param userDto
+	 * @param User
 	 * @return
 	 */
 	private boolean isCurrentUserAdmin() {

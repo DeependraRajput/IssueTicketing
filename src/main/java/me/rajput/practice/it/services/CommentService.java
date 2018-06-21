@@ -2,7 +2,7 @@ package me.rajput.practice.it.services;
 
 import java.util.List;
 
-import me.rajput.practice.it.model.db.Comment;
+import me.rajput.practice.it.model.Comment;
 
 /**
  * Description: This interface provides an commenting feature to the application. 

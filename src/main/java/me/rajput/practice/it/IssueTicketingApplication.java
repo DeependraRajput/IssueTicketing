@@ -4,13 +4,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.dto.UserDto;
+import me.rajput.practice.it.model.User;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class IssueTicketingApplication {
 
     public static void main(final String[] args) {
@@ -29,10 +31,10 @@ public class IssueTicketingApplication {
     
     @Bean
     @SessionScope
-    public UserDto currentUser() {
-        UserDto userDto = new UserDto();
-        userDto.setType(UserType.INVALID);
-		return userDto;
+    public User currentUser() {
+        User User = new User();
+        User.setType(UserType.INVALID);
+		return User;
     }
     
 }

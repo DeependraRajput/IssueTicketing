@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import me.rajput.practice.it.model.db.Comment;
+import me.rajput.practice.it.model.Comment;
 
 /**
  * 
