@@ -39,7 +39,7 @@ import me.rajput.practice.it.model.UserType;
 @Data
 @EqualsAndHashCode(of="loginId") //Should be of the business equality not database id.
 @Entity
-@Table(name = "USER")
+@Table(name = "USER", schema="TICKETING")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements Cloneable {
 	
@@ -80,7 +80,6 @@ public class User implements Cloneable {
     @NotNull
     @LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
-    @JsonIgnore
     private Date updatedAt;
     
     @Override

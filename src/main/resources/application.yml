@@ -1,3 +1,6 @@
+## Reference at below link
+## https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+
 server:
   port: 8080
   contextPath: /rajput
@@ -27,7 +30,7 @@ spring:
       
       
   jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
+    date-format: YYYY-MM-dd HH:mm:ss Z #ISO Standard date format for JavaScript
     
 #spring.data.web.pageable.default-page-size=20 # Default page size.
 #spring.data.web.sort.sort-parameter=sort

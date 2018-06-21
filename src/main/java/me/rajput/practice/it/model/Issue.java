@@ -35,7 +35,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of="id")
 @Entity
-@Table(name = "ISSUE")
+@Table(name = "ISSUE", schema="TICKETING")
 @EntityListeners(AuditingEntityListener.class)
 public class Issue {
 	

@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of="id")
 @Entity
-@Table(name="USER_SECURITY")
+@Table(name="USER_SECURITY", schema="TICKETING")
 //This is in case it is ever used in controller to protect being exposed.
 @JsonIgnoreProperties({"password", "createdAt", "lastLoginAt"}) 
 @EntityListeners(AuditingEntityListener.class)

@@ -33,7 +33,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of="id")
 @Entity
-@Table(name="COMMENT")
+@Table(name="COMMENT", schema="TICKETING")
 @EntityListeners(AuditingEntityListener.class)
 public class Comment {
 	
