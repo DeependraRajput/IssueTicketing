@@ -13,16 +13,14 @@ import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import me.rajput.practice.it.exceptions.LoginFailedException;
-import me.rajput.practice.it.model.UserType;
 import me.rajput.practice.it.model.User;
 import me.rajput.practice.it.model.UserSecurity;
-import me.rajput.practice.it.model.User;
+import me.rajput.practice.it.model.UserType;
 import me.rajput.practice.it.repositories.UserRepository;
 import me.rajput.practice.it.repositories.UserSecurityRepository;
 
@@ -104,7 +102,6 @@ public class UserServiceImpl implements UserService {
 		Assert.notNull(newUser.getFirstName(), "First name must not be null!");
 		Assert.notNull(newUser.getLastName(), "Last name must not be null!");
 
-		User newUser = modelMapper.map(newUser, User.class);
 		if(newUser.getType() == null)
 			newUser.setType(UserType.USER);
 		
