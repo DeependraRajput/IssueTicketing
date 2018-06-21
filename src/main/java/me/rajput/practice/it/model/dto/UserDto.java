@@ -12,7 +12,7 @@ import me.rajput.practice.it.model.UserType;
 
 @Data
 @EqualsAndHashCode(of="loginId")
-public class UserDto implements Cloneable {
+public class User implements Cloneable {
 	
 	@NotBlank
 	@Pattern(regexp = "[a-z]+\\d*")
@@ -37,9 +37,9 @@ public class UserDto implements Cloneable {
     private UserType type;
     
     @Override
-    public UserDto clone() {
+    public User clone() {
     	try {
-			return (UserDto)super.clone();
+			return (User)super.clone();
 		} catch (CloneNotSupportedException willNotOccur) {}
 		return null;
     }

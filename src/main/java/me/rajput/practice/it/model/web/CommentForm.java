@@ -33,7 +33,7 @@ public class CommentForm {
 	private Long issueId;
 	
 	@NotBlank
-	@Size(max = 255)
+	@Size(max = 4096)
 	private String text;
 	
 	private Long commentator; //Use actual User by @ManyToOne mapping.
