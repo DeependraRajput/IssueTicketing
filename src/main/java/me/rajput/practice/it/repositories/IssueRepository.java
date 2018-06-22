@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.Issue;
+import me.rajput.practice.it.model.db.Issue;
 
 /**
  * 
@@ -21,13 +21,13 @@ public interface IssueRepository extends CrudRepository<Issue, Long> {
 	
 	/**
 	 * Find the issues for the given parameters if either of them matches.
-	 * @param assignee
-	 * @param reporter
+	 * @param assigneeId
+	 * @param reporterId
 	 * @param status
 	 * @param pageable
 	 * @return
 	 */
-	List<Issue> findIssueByAssigneeAndReporterAndStatus(Long assignee, Long reporter, IssueStatus status, Pageable pageable);
+	List<Issue> findIssueByAssigneeIdAndReporterIdAndStatus(Long assigneeId, Long reporterId, IssueStatus status, Pageable pageable);
 	
 	/**
 	 * Find the issues created between provided dates (exclusive). 

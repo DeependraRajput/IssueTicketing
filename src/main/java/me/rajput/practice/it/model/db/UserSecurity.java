@@ -1,4 +1,4 @@
-package me.rajput.practice.it.model;
+package me.rajput.practice.it.model.db;
 
 import java.util.Date;
 
@@ -11,9 +11,10 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +24,8 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name="USER_SECURITY", schema="TICKETING")
 //This is in case it is ever used in controller to protect being exposed.
-@JsonIgnoreProperties({"password", "createdAt", "lastLoginAt"}) 
+//@JsonIgnoreProperties({"password", "createdAt", "lastLoginAt"}) 
+@JsonIgnoreType
 @EntityListeners(AuditingEntityListener.class)
 public class UserSecurity {
 	
@@ -39,6 +41,8 @@ public class UserSecurity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
+	@LastModifiedDate
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastLoginAt;
 
 }

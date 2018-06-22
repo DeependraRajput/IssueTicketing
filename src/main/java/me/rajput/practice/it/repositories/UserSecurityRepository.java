@@ -2,7 +2,7 @@ package me.rajput.practice.it.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
-import me.rajput.practice.it.model.UserSecurity;
+import me.rajput.practice.it.model.db.UserSecurity;
 
 /**
  * 

@@ -2,30 +2,41 @@ package me.rajput.practice.it.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.Issue;
-import me.rajput.practice.it.model.User;
+import me.rajput.practice.it.model.db.Issue;
+import me.rajput.practice.it.model.dto.CommentDto;
+import me.rajput.practice.it.model.dto.IssueDto;
 import me.rajput.practice.it.repositories.IssueRepository;
-import me.rajput.practice.it.repositories.UserRepository;
 
 @Service
+@Slf4j
 public class IssueServiceImpl implements IssueService {
 	
-	private static final Logger LOGGER = Logger.getLogger(IssueServiceImpl.class);
+	@Autowired
+	private IssueRepository issueRepo;
 	
 	@Autowired
-	private IssueRepository repository;
+	private UserService userService;
 	
 	@Autowired
-	private UserRepository userRepo;
+	private CommentService commentService;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.IssueService#saveIssue(me.rajput.practice.it.model.Issue)
+	 */
 	@Override
 	public Issue saveIssue(Issue issue) {
 		if(issue.getCreatedAt() == null) {
@@ -34,51 +45,67 @@ public class IssueServiceImpl implements IssueService {
 		if(issue.getStatus() == null || issue.getId() == null) {
 			issue.setStatus(IssueStatus.NEW);
 		}
-		return repository.save(issue);
+		
+		issue = issueRepo.save(issue);
+		
+		if(issue.getId() != null) {
+			LOGGER.info("New Issue has been saved properly with id ["+issue.getId()+"]");
+		}
+		
+		return issue;
 	}
 
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.IssueService#deleteIssue(java.lang.Long)
+	 */
 	@Override
 	public void deleteIssue(Long issueId) {
-		repository.delete(issueId);
-	}
-
-	@Override
-	public List<Issue> findIssues(String assignee, String reporter, IssueStatus status, Pageable pageable) {
-		Long assigneeId = null;
-		if(assignee != null) {
-			try {
-				assigneeId = Long.valueOf(assignee); 
-			} catch (NumberFormatException nfe) {
-				User user = userRepo.findByLoginId(assignee);
-				if(user != null) {
-					assigneeId = user.getId();
-				} else {
-					LOGGER.error("Assignee [" + assignee + "] is not found in the repository");
-				}
-			}
-		}
-		
-		Long reporterId = null;
-		if(reporter != null) {
-			try {
-				reporterId = Long.valueOf(reporter); 
-			} catch (NumberFormatException nfe) {
-				User user = userRepo.findByLoginId(reporter);
-				if(user != null) {
-					reporterId = user.getId();
-				} else {
-					LOGGER.error("Reporter [" + reporter + "] is not found in the repository");
-				}	
-			}
-		}
-		
-		return repository.findIssueByAssigneeAndReporterAndStatus(assigneeId, reporterId, status, pageable);
+		issueRepo.deleteById(issueId);
+		LOGGER.info("Issue with id ["+issueId+"] has been deleted properly.");
 	}
 	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.IssueService#getIssue(java.lang.Long, org.springframework.data.domain.Pageable)
+	 */
+	@Override
+	public IssueDto getIssue(Long id, Pageable pageable) {
+		Optional<Issue> issueOp = issueRepo.findById(id);
+		
+		IssueDto issueDto = null;
+		if(issueOp.isPresent()) {
+			Issue issue = issueOp.get();
+			issueDto = modelMapper.map(issue, IssueDto.class);
+			issueDto.setReporter(userService.getUserDtoById(issue.getReporterId()));
+			if(issue.getAssigneeId() != null) {
+				issueDto.setAssignee(userService.getUserDtoById(issue.getAssigneeId()));
+			}
+			
+			issueDto.setComments(commentService.getCommentsByIssueId(issue.getId(), pageable)
+									.stream().map(c -> modelMapper.map(c, CommentDto.class))
+									.collect(Collectors.toList()));
+		}
+		
+		return issueDto;
+	}
+
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.IssueService#findIssues(java.lang.String, java.lang.String, me.rajput.practice.it.model.IssueStatus, org.springframework.data.domain.Pageable)
+	 */
+	@Override
+	public List<Issue> findIssues(Long assigneeId, Long reporterId, IssueStatus status, Pageable pageable) {
+		//TODO: check the requirement and usability of the method.
+		return issueRepo.findIssueByAssigneeIdAndReporterIdAndStatus(assigneeId, reporterId, status, pageable);
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.IssueService#findIssues(java.util.Date, java.util.Date, org.springframework.data.domain.Pageable)
+	 */
 	@Override
 	public List<Issue> findIssues(Date startDate, Date endDate, Pageable pageable) {
 		Assert.notNull(startDate, "Start date must not be blank");
 		Assert.notNull(endDate, "Etart date must not be blank");
-		return repository.findIssueByCreatedAtBetween(startDate, endDate, pageable);
+		return issueRepo.findIssueByCreatedAtBetween(startDate, endDate, pageable);
 	}
+	
+
 }

@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,10 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rajput.practice.it.exceptions.LoginFailedException;
-import me.rajput.practice.it.model.User;
-import me.rajput.practice.it.model.UserSecurity;
 import me.rajput.practice.it.model.UserType;
+import me.rajput.practice.it.model.db.User;
+import me.rajput.practice.it.model.db.UserSecurity;
+import me.rajput.practice.it.model.dto.UserDto;
 import me.rajput.practice.it.repositories.UserRepository;
 import me.rajput.practice.it.repositories.UserSecurityRepository;
 
@@ -32,9 +34,8 @@ import me.rajput.practice.it.repositories.UserSecurityRepository;
  *
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
-	
-	private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
 	
 	@Autowired
 	private UserRepository userRepo;
@@ -63,8 +64,8 @@ public class UserServiceImpl implements UserService {
 		
 		User user = userRepo.findByLoginId(loginId);
 		if(user != null) {
-			UserSecurity userSec = secRepo.findOne(user.getId());
-			if(userSec == null || passwordManager.getEncryptedPassword(password).equals(userSec.getPassword())) {
+			Optional<UserSecurity> userSec = secRepo.findById(user.getId());
+			if(userSec.isPresent() || passwordManager.getEncryptedPassword(password).equals(userSec.get().getPassword())) {
 				modelMapper.map(user, this.currentUser);
 				LOGGER.info(user.getFirstName() + " " + user.getLastName() + "["+ user.getLoginId()+"] has successfully logged into the system");
 				return this.currentUser.clone();
@@ -126,12 +127,13 @@ public class UserServiceImpl implements UserService {
 		if(actor != null) {
 			User user = userRepo.findByLoginId(actor.getLoginId());
 			if(user != null) {
-				UserSecurity userSec = secRepo.findOne(user.getId());
-				if(userSec == null || 
-						userSec.getPassword().equals(passwordManager.getEncryptedPassword(oldPassword))) {
+				Optional<UserSecurity> userSec = secRepo.findById(user.getId());
+				if(userSec.isPresent() || 
+						userSec.get().getPassword().equals(passwordManager.getEncryptedPassword(oldPassword))) {
 					if(passwordManager.checkPasswordStrength(newPassword)) {
-						userSec.setPassword(passwordManager.getEncryptedPassword(newPassword));
-						secRepo.save(userSec);
+						UserSecurity us = userSec.get();
+						us.setPassword(passwordManager.getEncryptedPassword(newPassword));
+						secRepo.save(us);
 						isSuccess = true;
 					}
 				}
@@ -234,6 +236,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User currentUser() {
 		return UserType.INVALID.equals(this.currentUser.getType())? null: this.currentUser;
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.UserService#getUserDtoById(java.lang.Long)
+	 */
+	@Override
+	public UserDto getUserDtoById(Long id) {
+		Optional<User> userOp = userRepo.findById(id);
+		if(userOp.isPresent()) {
+			return modelMapper.map(userOp.get(), UserDto.class);
+		}
+		return null;
 	}
 	
 	/**

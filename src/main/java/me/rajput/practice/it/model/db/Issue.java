@@ -1,4 +1,4 @@
-package me.rajput.practice.it.model;
+package me.rajput.practice.it.model.db;
 
 import java.util.Date;
 
@@ -12,11 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -58,9 +58,9 @@ public class Issue {
 	private IssueStatus status;
 	
 	@NotNull
-	private Long reporter;	//Should use User object by @ManyToOne mapping or not?
+	private Long reporterId;	//Should use User object by @ManyToOne mapping or not?
 	
-	private Long assignee;  //Should use User object by @ManyToOne mapping or not?
+	private Long assigneeId;  //Should use User object by @ManyToOne mapping or not?
 	
 	@NotNull
 	@CreatedDate

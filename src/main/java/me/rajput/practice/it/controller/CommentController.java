@@ -3,13 +3,15 @@ package me.rajput.practice.it.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.rajput.practice.it.model.Comment;
+import me.rajput.practice.it.model.db.Comment;
+import me.rajput.practice.it.model.dto.CommentDto;
 import me.rajput.practice.it.services.CommentService;
 
 /**
@@ -26,19 +28,18 @@ public class CommentController {
 	@Autowired
 	private CommentService commentService;
 	
-	
-	@RequestMapping(path= {"/addComment", "/editComment"}, method=RequestMethod.POST)
+	@RequestMapping(path= {"/comment/addComment", "/comment/editComment"}, method=RequestMethod.POST)
 	public Comment addComment(@ModelAttribute Comment comment) {
 		return commentService.writeComment(comment);
 	}
 	
-	@RequestMapping(path="/getComments", params="issueId")
-	public List<Comment> getCommentsByIssue(@RequestParam Long issueId) {
-		return commentService.getCommentsByIssue(issueId);
+	@RequestMapping(path="/comment/getComments", params="issueId")
+	public List<CommentDto> getCommentsByIssue(@RequestParam Long issueId, Pageable pageable) {
+		return commentService.getCommentDtosByIssueId(issueId, pageable);
 	}
 	
-	@RequestMapping("/deleteComment")
-	public void deleteIssue(Long id) {
+	@RequestMapping("/comment/deleteComment")
+	public void deleteIssue(@RequestParam Long id) {
 		commentService.deleteComment(id);
 	}
 

@@ -3,7 +3,8 @@ package me.rajput.practice.it.services;
 import java.util.List;
 
 import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.User;
+import me.rajput.practice.it.model.db.User;
+import me.rajput.practice.it.model.dto.UserDto;
 
 /**
  * 
@@ -71,5 +72,12 @@ public interface UserService {
 	 * @return
 	 */
 	User currentUser();
-
+	
+	/**
+	 * Gets the User DTO by id.
+	 * @param id
+	 * @return
+	 */
+	UserDto getUserDtoById(Long id);
+	
 }

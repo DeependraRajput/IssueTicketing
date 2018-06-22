@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.ConstraintViolationException;
 
@@ -17,10 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import me.rajput.practice.it.TestBase;
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.Issue;
+import me.rajput.practice.it.model.db.Issue;
 import me.rajput.practice.it.repositories.IssueRepository;
 import me.rajput.practice.it.services.IssueService;
 
+/**
+ * 
+ * Description: Test class for testing IssueService. 
+ * 
+ * @author Deependra Rajput
+ * @date Jun 22, 2018
+ *
+ */
 @Transactional
 public class IssueServiceTest extends TestBase {
 	
@@ -33,29 +42,29 @@ public class IssueServiceTest extends TestBase {
 	@Before
 	public void initialiseData() {
 		Issue issue = new Issue();
-		issue.setReporter(1L);
-		issue.setAssignee(1L);
+		issue.setReporterId(1L);
+		issue.setAssigneeId(1L);
 		issue.setTitle("Test Ticket 1");
 		issue.setDescription("Description One");
 		issue = service.saveIssue(issue);
 		
 		issue = new Issue();
-		issue.setReporter(1L);
-		issue.setAssignee(2L);
+		issue.setReporterId(1L);
+		issue.setAssigneeId(2L);
 		issue.setTitle("Test Ticket 2");
 		issue.setDescription("Description Two");
 		issue = service.saveIssue(issue);
 		
 		issue = new Issue();
-		issue.setReporter(1L);
-		issue.setAssignee(1L);
+		issue.setReporterId(1L);
+		issue.setAssigneeId(1L);
 		issue.setTitle("Test Ticket 3");
 		issue.setDescription("Description Three");
 		issue = service.saveIssue(issue);
 		
 		issue = new Issue();
-		issue.setReporter(1L);
-		issue.setAssignee(2L);
+		issue.setReporterId(1L);
+		issue.setAssigneeId(2L);
 		issue.setTitle("Test Ticket 4");
 		issue.setDescription("Description Four");
 		issue = service.saveIssue(issue);
@@ -67,7 +76,7 @@ public class IssueServiceTest extends TestBase {
 	@Test
 	public void testCreateIssue() {
 		Issue issue = new Issue();
-		issue.setReporter(1L);
+		issue.setReporterId(1L);
 		issue.setTitle("Test Title");
 		issue.setDescription("Test Description");
 		issue = service.saveIssue(issue);
@@ -85,7 +94,7 @@ public class IssueServiceTest extends TestBase {
 	@Test(expected=ConstraintViolationException.class)
 	public void testCreateIssueWithIllegalArguments() {
 		Issue issue = new Issue();
-		issue.setReporter(null);
+		issue.setReporterId(null);
 		issue.setTitle(null);
 		issue.setDescription("Test Description");
 		issue = service.saveIssue(issue);
@@ -98,7 +107,7 @@ public class IssueServiceTest extends TestBase {
 	public void testUpdateIssue() {
 		Issue issue = new Issue();
 		issue.setId(null);
-		issue.setReporter(1L);
+		issue.setReporterId(1L);
 		issue.setTitle("Test Title");
 		issue.setDescription("Test Description");
 		
@@ -125,7 +134,7 @@ public class IssueServiceTest extends TestBase {
 	 */
 	@Test
 	public void testFindIssuesByReporterPageanationAndSortingUp() {
-		List<Issue> issues = service.findIssues("1", "1", IssueStatus.NEW, new PageRequest(0, 1, Direction.ASC, "created"));
+		List<Issue> issues = service.findIssues(1L, 1L, IssueStatus.NEW, PageRequest.of(0, 1, Direction.ASC, "createdAt"));
 		Assert.assertNotNull("Issues list is null", issues);
 		Assert.assertEquals("Issues list is empty", 1, issues.size());
 		Assert.assertEquals("Issues found is not expected", "Test Ticket 1", issues.get(0).getTitle());
@@ -136,7 +145,7 @@ public class IssueServiceTest extends TestBase {
 	 */
 	@Test
 	public void testFindIssuesByReporterPageanationAndSortingDown() {
-		List<Issue> issues = service.findIssues("1", "1", IssueStatus.NEW, new PageRequest(0, 1, Direction.DESC, "created"));
+		List<Issue> issues = service.findIssues(1L, 1L, IssueStatus.NEW, PageRequest.of(0, 1, Direction.DESC, "createdAt"));
 		Assert.assertNotNull("Issues list is null", issues);
 		Assert.assertEquals("Issues list is empty", 1, issues.size());
 		Assert.assertEquals("Issues found is not expected", "Test Ticket 3", issues.get(0).getTitle());
@@ -150,7 +159,7 @@ public class IssueServiceTest extends TestBase {
 		Date startDate = Date.from(LocalDate.now().minusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		Date endDate = Date.from(LocalDate.now().plusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		
-		List<Issue> issues = service.findIssues(startDate, endDate, new PageRequest(0, 1, Direction.ASC, "created"));
+		List<Issue> issues = service.findIssues(startDate, endDate, PageRequest.of(0, 1, Direction.ASC, "createdAt"));
 		Assert.assertNotNull("Issues list is null", issues);
 		Assert.assertEquals("Issues list is empty", 1, issues.size());
 		Assert.assertEquals("Issues found is not expected", "Test Ticket 1", issues.get(0).getTitle());
@@ -164,7 +173,7 @@ public class IssueServiceTest extends TestBase {
 		Date startDate = Date.from(LocalDate.now().minusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		Date endDate = Date.from(LocalDate.now().plusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		
-		List<Issue> issues = service.findIssues(startDate, endDate, new PageRequest(0, 1, Direction.DESC, "created"));
+		List<Issue> issues = service.findIssues(startDate, endDate, PageRequest.of(0, 1, Direction.DESC, "created"));
 		Assert.assertNotNull("Issues list is null", issues);
 		Assert.assertEquals("Issues list is empty", 1, issues.size());
 		Assert.assertEquals("Issues found is not expected", "Test Ticket 4", issues.get(0).getTitle());
@@ -177,17 +186,17 @@ public class IssueServiceTest extends TestBase {
 	public void testDeleteIssueById() {
 		
 		Issue issue = new Issue();
-		issue.setReporter(1L);
-		issue.setAssignee(1L);
+		issue.setReporterId(1L);
+		issue.setAssigneeId(1L);
 		issue.setTitle("Test Ticket 1");
 		issue.setDescription("Description One");
 		issue = service.saveIssue(issue);
 		
-		issue = repository.findOne(issue.getId());
-		Assert.assertNotNull("Issues before delete not found", issue);
+		Optional<Issue> issueOptional = repository.findById(issue.getId());
+		Assert.assertTrue("Issues before delete not found", issueOptional.isPresent());
 		service.deleteIssue(issue.getId());
-		issue = repository.findOne(issue.getId());
-		Assert.assertNull("Issues not deleted properly.", issue);
+		issueOptional = repository.findById(issue.getId());
+		Assert.assertFalse("Issues not deleted properly.", issueOptional.isPresent());
 	}
 
 }

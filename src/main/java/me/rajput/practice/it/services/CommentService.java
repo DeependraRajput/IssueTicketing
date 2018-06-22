@@ -2,7 +2,10 @@ package me.rajput.practice.it.services;
 
 import java.util.List;
 
-import me.rajput.practice.it.model.Comment;
+import org.springframework.data.domain.Pageable;
+
+import me.rajput.practice.it.model.db.Comment;
+import me.rajput.practice.it.model.dto.CommentDto;
 
 /**
  * Description: This interface provides an commenting feature to the application. 
@@ -28,8 +31,17 @@ public interface CommentService {
 	/**
 	 * Gets a list of all comments for an issue Id.
 	 * @param issueId
+	 * @param pagenation and sorting criteria.
 	 * @return
 	 */
-	List<Comment> getCommentsByIssue(Long issueId);
+	List<Comment> getCommentsByIssueId(Long issueId, Pageable pageable);
+	
+	/**
+	 * Gets a list of all comments for an issue Id.
+	 * @param issueId
+	 * @param pagenation and sorting criteria.
+	 * @return
+	 */
+	List<CommentDto> getCommentDtosByIssueId(Long issueId, Pageable pageable);
 
 }

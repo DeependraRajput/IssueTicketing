@@ -14,6 +14,9 @@ public class PasswordManagerImpl implements PasswordManager {
 	@Value("#{T(java.util.Arrays).asList('${password.regexes}'.split(':'))}")
 	List<String> strengthCheckers;
 	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.UserService#login(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean checkPasswordStrength(String password) {
 		
@@ -25,6 +28,9 @@ public class PasswordManagerImpl implements PasswordManager {
 		return isGood;
 	}
 	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.UserService#login(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public String getEncryptedPassword(String password) {
 //		return passwordEncoder.encode(password);

@@ -7,11 +7,13 @@ import javax.validation.ConstraintViolationException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
 import me.rajput.practice.it.TestBase;
-import me.rajput.practice.it.model.Comment;
-import me.rajput.practice.it.model.Issue;
+import me.rajput.practice.it.model.db.Comment;
+import me.rajput.practice.it.model.db.Issue;
 import me.rajput.practice.it.services.CommentService;
 import me.rajput.practice.it.services.IssueService;
 
@@ -36,7 +38,7 @@ public class CommentServiceTest extends TestBase {
 		newIssue = issueService.saveIssue(newIssue);
 		
 		Comment newComment = new Comment();
-		newComment.setCommentator(1L);
+		newComment.setCommentatorId(1L);
 		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
@@ -76,7 +78,7 @@ public class CommentServiceTest extends TestBase {
 		newIssue = issueService.saveIssue(newIssue);
 		
 		Comment newComment = new Comment();
-		newComment.setCommentator(1L);
+		newComment.setCommentatorId(1L);
 		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
@@ -106,7 +108,7 @@ public class CommentServiceTest extends TestBase {
 		newIssue = issueService.saveIssue(newIssue);
 		
 		Comment newComment = new Comment();
-		newComment.setCommentator(1L);
+		newComment.setCommentatorId(1L);
 		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
@@ -117,7 +119,7 @@ public class CommentServiceTest extends TestBase {
 		
 		commentService.deleteComment(newComment.getId());
 		
-		List<Comment> comments = commentService.getCommentsByIssue(newIssue.getId());
+		List<Comment> comments = commentService.getCommentsByIssueId(newIssue.getId(), PageRequest.of(0, 10, Direction.ASC, "createdAt"));
 		
 		Assert.assertNotNull("Comment ID is NULL.", comments);
 		Assert.assertTrue("Comment not deleted", comments.isEmpty());
@@ -137,14 +139,14 @@ public class CommentServiceTest extends TestBase {
 		newIssue = issueService.saveIssue(newIssue);
 		
 		Comment newComment = new Comment();
-		newComment.setCommentator(1L);
+		newComment.setCommentatorId(1L);
 		newComment.setIssueId(newIssue.getId());
 		newComment.setText("Sample Comment 1");
 		newComment.setId(null);
 		
 		newComment = commentService.writeComment(newComment);
 		
-		List<Comment> comments = commentService.getCommentsByIssue(newIssue.getId());
+		List<Comment> comments = commentService.getCommentsByIssueId(newIssue.getId(), PageRequest.of(0, 10, Direction.ASC, "createdAt"));
 		Assert.assertNotNull("Comment ID is NULL.", comments);
 		Assert.assertEquals("Comment count mismatch", 1, comments.size());
 		Assert.assertEquals("Comment mismatch", newComment.getId(), comments.get(0).getId());

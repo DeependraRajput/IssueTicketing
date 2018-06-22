@@ -1,23 +1,17 @@
 package me.rajput.practice.it.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-
-import me.rajput.practice.it.model.User;
+import me.rajput.practice.it.model.db.User;
 import me.rajput.practice.it.services.UserService;
 
 /**
@@ -33,21 +27,12 @@ public class UserController {
 	@Autowired
 	private UserService service;
 	
-	/**
-	 * Initialise the data conversion for Date to String with given format.
-	 * @param binder
-	 */
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(new StdDateFormat(), false));
-    }
-	
     /**
      * Method called to login to the system with credentials and initialise a session until log-out.
      * @param newUser
      * @return
      */
-	@RequestMapping(path = "/login", method = RequestMethod.GET)
+	@RequestMapping(path = "/user/login", method = RequestMethod.GET)
 	public User login(@RequestParam String loginId, @RequestParam String password) {
 		
 		if(loginId.matches(".*\\W.*")) throw new IllegalArgumentException("Illegal characters found in the lognId");
@@ -59,7 +44,7 @@ public class UserController {
      * @param newUser
      * @return
      */
-	@RequestMapping("/logout")
+	@RequestMapping("/user/logout")
 	public void logout() {
 		service.logout();
 	}
@@ -69,7 +54,7 @@ public class UserController {
      * @param newUser
      * @return
      */
-	@RequestMapping("/addUser")
+	@RequestMapping("/user/addUser")
 	public User createUser(@Valid @ModelAttribute User newUser) {
 		return service.addUser(newUser);
 	}
@@ -79,7 +64,7 @@ public class UserController {
 	 * @param loginId
 	 * @return
 	 */
-	@RequestMapping("/deleteUser")
+	@RequestMapping("/user/deleteUser")
 	public boolean deleteUser(@RequestParam String loginId) {
 		return service.deleteUser(loginId);
 	}
@@ -89,7 +74,7 @@ public class UserController {
 	 * @param user values
 	 * @return
 	 */
-	@RequestMapping("/searchUsers")
+	@RequestMapping("/user/searchUsers")
 	public List<User> searchUser(@ModelAttribute User values) {
 		return service.searchUsers(values);
 	}

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import me.rajput.practice.it.model.User;
+import me.rajput.practice.it.model.db.User;
 
 /**
  * 

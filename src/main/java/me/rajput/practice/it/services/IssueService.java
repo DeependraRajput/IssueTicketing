@@ -6,7 +6,8 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.Issue;
+import me.rajput.practice.it.model.db.Issue;
+import me.rajput.practice.it.model.dto.IssueDto;
 
 /**
  * Interface defining the APIs to provided by the service on issues.
@@ -31,14 +32,22 @@ public interface IssueService {
 	void deleteIssue(Long issueId);
 	
 	/**
+	 * Returns the issue to be used by the client with issue, user and comments in a single call.
+	 * @param id
+	 * @param pagenation and sorting criteria for comments. 
+	 * @return
+	 */
+	IssueDto getIssue(Long id, Pageable pageable);
+	
+	/**
 	 * This will provide a list of issues based on the provided filter criteria.
-	 * @param assignee of tickets.
-	 * @param reporter of tickets.
+	 * @param assigneeId of tickets.
+	 * @param reporterId  of tickets.
 	 * @param status of tickets.
 	 * @param pagenation and sorting criteria.
 	 * @return
 	 */
-	List<Issue> findIssues(String assignee, String reporter, IssueStatus status, Pageable pageable);
+	List<Issue> findIssues(Long assigneeId, Long reporterId, IssueStatus status, Pageable pageable);
 	
 	/**
 	 * This will provide a list of issues based on the provided filter criteria.

@@ -2,9 +2,10 @@ package me.rajput.practice.it.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
-import me.rajput.practice.it.model.Comment;
+import me.rajput.practice.it.model.db.Comment;
 
 /**
  * 
@@ -16,6 +17,6 @@ import me.rajput.practice.it.model.Comment;
  */
 public interface CommentRepository extends CrudRepository<Comment, Long>{
 	
-	List<Comment> findCommentByIssueId(Long issueId);
+	List<Comment> findCommentByIssueId(Long issueId, Pageable pageable);
 
 }

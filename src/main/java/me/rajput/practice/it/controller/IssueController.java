@@ -4,20 +4,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.Issue;
+import me.rajput.practice.it.model.db.Issue;
+import me.rajput.practice.it.model.dto.IssueDto;
 import me.rajput.practice.it.services.IssueService;
 
 /**
@@ -34,55 +30,48 @@ public class IssueController {
 	@Autowired
 	private IssueService issueService;
 	
-	/**
-	 * Initialize the data conversion for Date to String with given format.
-	 * @param binder
-	 */
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(new StdDateFormat(), false));
-    }
-	
     /**
      * Create or update an issue.
      * @param issue
      * @return
      */
-	@RequestMapping(path= {"/createIssue", "/updateIssue"}, method=RequestMethod.POST)
-	public Issue createIssue(@ModelAttribute Issue issue) {
-		return issueService.saveIssue(issue);
+	@RequestMapping(path= {"/issue/createIssue", "/issue/updateIssue"}, method=RequestMethod.POST)
+	public Long createIssue(@ModelAttribute Issue issue) {
+		 issue = issueService.saveIssue(issue);
+		 return issue.getId();
 	}
 	
 	/**
 	 * Retrieves and issue based on it's id.
 	 * @param issue
+	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping("/getIssue")
-	public Issue getIssue(@RequestParam("id") Issue issue) {
-		return issue;
+	@RequestMapping("/issue/getIssue")
+	public IssueDto getIssue(@RequestParam("id") Long id, Pageable pageable) {
+		return issueService.getIssue(id, pageable);
 	}
 	
 	/**
 	 * Deletes an issue for the given id.
 	 * @param id
 	 */
-	@RequestMapping("/deleteIssue")
+	@RequestMapping("/issue/deleteIssue")
 	public void deleteIssue(@RequestParam("id") Long id) {
 		issueService.deleteIssue(id);
 	}
 	
 	/**
 	 * Finds all issues for the given parameters.
-	 * @param assignee
-	 * @param reporter
+	 * @param assigneeId
+	 * @param reporterId
 	 * @param status
 	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping(path="/findIssues", params={"assignee", "reporter", "status"})
-	public List<Issue> findIssues(@RequestParam String assignee, @RequestParam String reporter, @RequestParam IssueStatus status, Pageable pageable) {
-		return issueService.findIssues(assignee, reporter, status, pageable);
+	@RequestMapping(path="/issue/findIssues", params={"assigneeId", "reporterId", "status"})
+	public List<Issue> findIssues(@RequestParam Long assigneeId, @RequestParam Long reporterId, @RequestParam IssueStatus status, Pageable pageable) {
+		return issueService.findIssues(assigneeId, reporterId, status, pageable);
 	}
 	
 	/**
@@ -92,7 +81,7 @@ public class IssueController {
 	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping(path="/findIssues", params= {"startDate", "endDate"})
+	@RequestMapping(path="/issue/findIssues", params={"startDate", "endDate"})
 	public List<Issue> findIssues(@RequestParam Date startDate, @RequestParam Date endDate, Pageable pageable) {
 		return issueService.findIssues(startDate, endDate, pageable);
 	}
