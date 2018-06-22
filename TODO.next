@@ -1,0 +1,2 @@
+1. Convert all the implicit date time zone for @CreatedDate and @LastModifiedDate to UTC.
+2. Create a issue finder with whatever given fields.
