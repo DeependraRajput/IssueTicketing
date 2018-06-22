@@ -1,6 +1,6 @@
 package me.rajput.practice.it.repositories;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -36,6 +36,6 @@ public interface IssueRepository extends CrudRepository<Issue, Long> {
 	 * @param pageable
 	 * @return
 	 */
-	List<Issue> findIssueByCreatedAtBetween(Date startDate, Date endDate, Pageable pageable);
+	List<Issue> findIssueByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 	
 }

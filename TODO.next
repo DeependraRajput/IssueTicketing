@@ -1,2 +1,7 @@
-1. Convert all the implicit date time zone for @CreatedDate and @LastModifiedDate to UTC.
+1. Integrate with SAML authentication server.  spring-security-saml and ssocircle to be used.
 2. Create a issue finder with whatever given fields.
+3. Create separate forms for web input.
+4. Entity validation DOES NOT works on database stored values, hence can be stored from other system.
+5. Find, how to add a where clause statically in the entity table like done with XML conf to fetch from a common table for current application.
+6. How to keep the validations at one place for same data point across multiple classes like Issue, IssueDto and IssueForm.
+7. Correct the rest mapping methods once complete.

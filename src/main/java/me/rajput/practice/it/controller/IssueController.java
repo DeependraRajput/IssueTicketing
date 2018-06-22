@@ -1,6 +1,6 @@
 package me.rajput.practice.it.controller;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class IssueController {
      * @param issue
      * @return
      */
-	@RequestMapping(path= {"/issue/createIssue", "/issue/updateIssue"}, method=RequestMethod.POST)
+	@RequestMapping(path= {"/issue/createIssue", "/issue/updateIssue"}, method=RequestMethod.GET)
 	public Long createIssue(@ModelAttribute Issue issue) {
 		 issue = issueService.saveIssue(issue);
 		 return issue.getId();
@@ -82,7 +82,7 @@ public class IssueController {
 	 * @return
 	 */
 	@RequestMapping(path="/issue/findIssues", params={"startDate", "endDate"})
-	public List<Issue> findIssues(@RequestParam Date startDate, @RequestParam Date endDate, Pageable pageable) {
+	public List<Issue> findIssues(@RequestParam LocalDateTime startDate, @RequestParam LocalDateTime endDate, Pageable pageable) {
 		return issueService.findIssues(startDate, endDate, pageable);
 	}
 

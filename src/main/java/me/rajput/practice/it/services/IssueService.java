@@ -1,6 +1,6 @@
 package me.rajput.practice.it.services;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -56,6 +56,6 @@ public interface IssueService {
 	 * @param pagenation and sorting criteria.
 	 * @return
 	 */
-	List<Issue> findIssues(Date startDate, Date endDate, Pageable pageable);
+	List<Issue> findIssues(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 	
 }

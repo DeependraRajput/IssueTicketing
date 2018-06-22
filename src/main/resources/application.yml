@@ -1,5 +1,7 @@
 ## Reference at below link
 ## https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+## https://docs.jboss.org/hibernate/orm/current/quickstart/html_single/
+## https://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html
 
 server:
   port: 8080
@@ -32,12 +34,13 @@ spring:
       
       
   jackson:
-    date-format: YYYY-MM-dd HH:mm:ss Z #ISO Standard date format for JavaScript.
+    date-format: YYYY-MM-dd HH:mm:ss Z #ISO Standard date format for JavaScript. This does not work on LocalDateTime.
+    default-property-inclusion: NON_NULL
     
   data:
     web:
       pageable:
-        default-page-size: 5 # Default page size is 20
+        default-page-size: 50 # Default page size is 20
     
 password:
   regexes: .*[A-Z]+.*:.*[a-z]+.*:.*[0-9]+.*:.*[\\W]+.*:.{8,12}

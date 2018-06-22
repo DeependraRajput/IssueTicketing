@@ -2,6 +2,8 @@ package me.rajput.practice.it.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,7 +31,7 @@ public class CommentController {
 	private CommentService commentService;
 	
 	@RequestMapping(path= {"/comment/addComment", "/comment/editComment"}, method=RequestMethod.POST)
-	public Comment addComment(@ModelAttribute Comment comment) {
+	public Comment addComment(@Valid @ModelAttribute Comment comment) {
 		return commentService.writeComment(comment);
 	}
 	
@@ -39,7 +41,7 @@ public class CommentController {
 	}
 	
 	@RequestMapping("/comment/deleteComment")
-	public void deleteIssue(@RequestParam Long id) {
+	public void deleteComment(@RequestParam Long id) {
 		commentService.deleteComment(id);
 	}
 

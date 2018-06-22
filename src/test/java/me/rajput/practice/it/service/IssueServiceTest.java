@@ -1,8 +1,6 @@
 package me.rajput.practice.it.service;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -156,8 +154,8 @@ public class IssueServiceTest extends TestBase {
 	 */
 	@Test
 	public void testFindIssuesByCreatedPageanationAndSortingUp() {
-		Date startDate = Date.from(LocalDate.now().minusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
-		Date endDate = Date.from(LocalDate.now().plusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
+		LocalDateTime startDate = LocalDateTime.now().minusDays(1L);
+		LocalDateTime endDate = LocalDateTime.now().plusDays(1L);
 		
 		List<Issue> issues = service.findIssues(startDate, endDate, PageRequest.of(0, 1, Direction.ASC, "createdAt"));
 		Assert.assertNotNull("Issues list is null", issues);
@@ -170,8 +168,8 @@ public class IssueServiceTest extends TestBase {
 	 */
 	@Test
 	public void testFindIssuesByCreatedPageanationAndSortingDown() {
-		Date startDate = Date.from(LocalDate.now().minusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
-		Date endDate = Date.from(LocalDate.now().plusDays(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
+		LocalDateTime startDate = LocalDateTime.now().minusDays(1L);
+		LocalDateTime endDate = LocalDateTime.now().plusDays(1L);
 		
 		List<Issue> issues = service.findIssues(startDate, endDate, PageRequest.of(0, 1, Direction.DESC, "created"));
 		Assert.assertNotNull("Issues list is null", issues);

@@ -5,7 +5,6 @@ package me.rajput.practice.it.services;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,7 +64,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepo.findByLoginId(loginId);
 		if(user != null) {
 			Optional<UserSecurity> userSec = secRepo.findById(user.getId());
-			if(userSec.isPresent() || passwordManager.getEncryptedPassword(password).equals(userSec.get().getPassword())) {
+			if(!userSec.isPresent() || passwordManager.getEncryptedPassword(password).equals(userSec.get().getPassword())) {
 				modelMapper.map(user, this.currentUser);
 				LOGGER.info(user.getFirstName() + " " + user.getLastName() + "["+ user.getLoginId()+"] has successfully logged into the system");
 				return this.currentUser.clone();
@@ -106,9 +105,6 @@ public class UserServiceImpl implements UserService {
 		if(newUser.getType() == null)
 			newUser.setType(UserType.USER);
 		
-		Date currentDate = new Date();
-		newUser.setUpdatedAt(currentDate);
-		
 		userRepo.save(newUser);
 		
 		LOGGER.info(newUser.getFirstName() + " " + newUser.getLastName() + "["+ newUser.getLoginId()+"] has successfully been added to the system");
@@ -128,7 +124,7 @@ public class UserServiceImpl implements UserService {
 			User user = userRepo.findByLoginId(actor.getLoginId());
 			if(user != null) {
 				Optional<UserSecurity> userSec = secRepo.findById(user.getId());
-				if(userSec.isPresent() || 
+				if(!userSec.isPresent() || 
 						userSec.get().getPassword().equals(passwordManager.getEncryptedPassword(oldPassword))) {
 					if(passwordManager.checkPasswordStrength(newPassword)) {
 						UserSecurity us = userSec.get();
@@ -219,7 +215,6 @@ public class UserServiceImpl implements UserService {
 			User user = userRepo.findByLoginId(loginId);
 			if(user != null && user.getId() != null) {
 				user.setType(type);
-				user.setUpdatedAt(new Date());
 				userRepo.save(user);
 				isSuccess = true;
 			}
@@ -243,10 +238,14 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserDto getUserDtoById(Long id) {
+		
+		if(id == null) return null;
+		
 		Optional<User> userOp = userRepo.findById(id);
 		if(userOp.isPresent()) {
 			return modelMapper.map(userOp.get(), UserDto.class);
 		}
+		
 		return null;
 	}
 	

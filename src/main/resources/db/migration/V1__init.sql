@@ -72,7 +72,7 @@ REFERENCES TICKETING.USER(id);
 
 INSERT INTO TICKETING.USER (login_id, first_name, last_name, email) VALUES ('prajput', 'Prishi', 'Rajput', 'prishi@rajput.me');
 INSERT INTO TICKETING.USER (login_id, first_name, last_name, email) VALUES ('ssingh', 'Shivangi', 'Singh', 'shivanig@singh.me');
-INSERT INTO TICKETING.USER (login_id, first_name, last_name, email) VALUES ('drajput', 'Deependra', 'Rajput', 'deependra@rajput.me');
+INSERT INTO TICKETING.USER (login_id, first_name, last_name, email, type) VALUES ('drajput', 'Deependra', 'Rajput', 'deependra@rajput.me', 'ADMIN');
 
 
 INSERT INTO TICKETING.ISSUE (title, description, status, reporter_id, created_at)
@@ -87,7 +87,7 @@ VALUES (
 INSERT INTO TICKETING.ISSUE (title, description, status, reporter_id, created_at)
 VALUES (
   'Issue number two',
-  'This is issue number two',
+  'This is<Script> issue </Script>number two',
   'IN_PROGRESS',
   (select id from TICKETING.USER where USER.login_id = 'ssingh'),
   '2017-08-01'

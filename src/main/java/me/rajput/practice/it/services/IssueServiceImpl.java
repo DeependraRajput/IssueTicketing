@@ -1,6 +1,6 @@
 package me.rajput.practice.it.services;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rajput.practice.it.exceptions.UnauthorizedOperationException;
 import me.rajput.practice.it.model.IssueStatus;
 import me.rajput.practice.it.model.db.Issue;
+import me.rajput.practice.it.model.db.User;
 import me.rajput.practice.it.model.dto.CommentDto;
 import me.rajput.practice.it.model.dto.IssueDto;
 import me.rajput.practice.it.repositories.IssueRepository;
@@ -39,11 +41,16 @@ public class IssueServiceImpl implements IssueService {
 	 */
 	@Override
 	public Issue saveIssue(Issue issue) {
-		if(issue.getCreatedAt() == null) {
-			issue.setCreatedAt(new Date());
+		User currentUser = userService.currentUser();
+		
+		if(currentUser == null) {
+			throw new UnauthorizedOperationException("Please login first"); 
 		}
-		if(issue.getStatus() == null || issue.getId() == null) {
+		
+		if(issue.getId() == null) {
 			issue.setStatus(IssueStatus.NEW);
+		} else if(!currentUser.getId().equals(issue.getReporterId())) {
+			throw new UnauthorizedOperationException("You are not the reporter of this issue.");
 		}
 		
 		issue = issueRepo.save(issue);
@@ -81,7 +88,12 @@ public class IssueServiceImpl implements IssueService {
 			}
 			
 			issueDto.setComments(commentService.getCommentsByIssueId(issue.getId(), pageable)
-									.stream().map(c -> modelMapper.map(c, CommentDto.class))
+									.stream()
+									.map(c -> {
+										CommentDto dto = modelMapper.map(c, CommentDto.class);
+										dto.setCommentator(userService.getUserDtoById(c.getCommentatorId()));
+										return dto;
+									})
 									.collect(Collectors.toList()));
 		}
 		
@@ -101,7 +113,7 @@ public class IssueServiceImpl implements IssueService {
 	 * @see me.rajput.practice.it.services.IssueService#findIssues(java.util.Date, java.util.Date, org.springframework.data.domain.Pageable)
 	 */
 	@Override
-	public List<Issue> findIssues(Date startDate, Date endDate, Pageable pageable) {
+	public List<Issue> findIssues(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
 		Assert.notNull(startDate, "Start date must not be blank");
 		Assert.notNull(endDate, "Etart date must not be blank");
 		return issueRepo.findIssueByCreatedAtBetween(startDate, endDate, pageable);

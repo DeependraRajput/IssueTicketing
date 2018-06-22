@@ -1,7 +1,6 @@
 package me.rajput.practice.it.services;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,6 @@ public class CommentServiceImpl implements CommentService {
 	 */
 	@Override
 	public Comment writeComment(Comment comment) {
-		comment.setCreatedAt(new Date());
 		comment = repository.save(comment);
 		LOGGER.info("New comment to issue ["+comment.getIssueId()+"] has been saved");
 		return comment;
