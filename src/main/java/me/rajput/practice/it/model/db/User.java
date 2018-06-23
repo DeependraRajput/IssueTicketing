@@ -29,7 +29,7 @@ import me.rajput.practice.it.model.UserType;
 /**
  * 
  * Description: Data model representing a user in the database, web and application. 
- * The class must be a business entity not a replica of database table. 
+ * The class must be a business entity not a replica of database table. Use AttributeConverters for custom fields.
  * 
  * @author Deependra Rajput
  * @date Jun 14, 2018
