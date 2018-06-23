@@ -1,10 +1,11 @@
 package me.rajput.practice.it;
 
+import java.util.TimeZone;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.context.annotation.SessionScope;
@@ -12,13 +13,14 @@ import org.springframework.web.context.annotation.SessionScope;
 import me.rajput.practice.it.model.UserType;
 import me.rajput.practice.it.model.db.User;
 import me.rajput.practice.it.services.auditing.ApplicationAuditorAware;
-import me.rajput.practice.it.services.auditing.UniversalDateTimeProvider;
 
 @SpringBootApplication
-@EnableJpaAuditing(auditorAwareRef = "auditorAware", dateTimeProviderRef = "dateTimeProvider")
+@EnableJpaAuditing(auditorAwareRef = "auditorAware") //, dateTimeProviderRef = "dateTimeProvider")
 public class IssueTicketingApplication {
 
     public static void main(final String[] args) {
+    	//Run the application in UTC time zone for portability.
+    	TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         SpringApplication.run(IssueTicketingApplication.class, args);
     }
     
@@ -40,10 +42,14 @@ public class IssueTicketingApplication {
 		return User;
     }
     
-    @Bean
-    public DateTimeProvider dateTimeProvider() {
-    	return new UniversalDateTimeProvider();
-    }
+    /**
+     * Just a sample for feature.
+     * @return
+     */
+//    @Bean
+//    public DateTimeProvider dateTimeProvider() {
+//    	return new UniversalDateTimeProvider();
+//    }
     
     @Bean
     public AuditorAware auditorAware() {

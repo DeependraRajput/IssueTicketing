@@ -32,7 +32,7 @@ public class UserController {
      * @param newUser
      * @return
      */
-	@RequestMapping(path = "/user/login", method = RequestMethod.GET)
+	@RequestMapping(path = "/login", method = RequestMethod.GET)
 	public User login(@RequestParam String loginId, @RequestParam String password) {
 		
 		if(loginId.matches(".*\\W.*")) throw new IllegalArgumentException("Illegal characters found in the lognId");
@@ -44,7 +44,7 @@ public class UserController {
      * @param newUser
      * @return
      */
-	@RequestMapping("/user/logout")
+	@RequestMapping("/logout")
 	public void logout() {
 		service.logout();
 	}
@@ -54,7 +54,7 @@ public class UserController {
      * @param newUser
      * @return
      */
-	@RequestMapping("/user/addUser")
+	@RequestMapping(path="/user", method=RequestMethod.POST)
 	public User createUser(@Valid @ModelAttribute User newUser) {
 		return service.addUser(newUser);
 	}
@@ -64,7 +64,7 @@ public class UserController {
 	 * @param loginId
 	 * @return
 	 */
-	@RequestMapping("/user/deleteUser")
+	@RequestMapping(path="/user", method=RequestMethod.DELETE)
 	public boolean deleteUser(@RequestParam String loginId) {
 		return service.deleteUser(loginId);
 	}
@@ -74,7 +74,7 @@ public class UserController {
 	 * @param user values
 	 * @return
 	 */
-	@RequestMapping("/user/searchUsers")
+	@RequestMapping(path="/user/searchUsers", method=RequestMethod.GET)
 	public List<User> searchUser(@ModelAttribute User values) {
 		return service.searchUsers(values);
 	}

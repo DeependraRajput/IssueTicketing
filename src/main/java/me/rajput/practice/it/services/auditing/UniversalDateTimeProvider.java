@@ -10,6 +10,7 @@ import org.springframework.data.auditing.DateTimeProvider;
 /**
  * 
  * Description: Date time provider for Spring to provider time in UTC time zone only. 
+ * It's a sample only to show the feature. Should run the entire application in UTC zone.
  * 
  * @author Deependra Rajput
  * @date Jun 23, 2018

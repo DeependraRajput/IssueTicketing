@@ -29,6 +29,7 @@ import me.rajput.practice.it.model.UserType;
 /**
  * 
  * Description: Data model representing a user in the database, web and application. 
+ * The class must be a business entity not a replica of database table. 
  * 
  * @author Deependra Rajput
  * @date Jun 14, 2018
@@ -59,16 +60,16 @@ public class User implements Cloneable {
     
     @NotBlank
     @Size(min = 1, max = 15)
-    @Pattern(regexp = "[A-Z][a-z]+")
+    @Pattern(regexp = "(?U)[\\\\p{Alpha}\\\\-'. ]+")	//Support international names.
     private String firstName;
     
     @Size(max = 15)
-    @Pattern(regexp = "[A-Z][a-z]+")
+    @Pattern(regexp = "(?U)[\\\\p{Alpha}\\\\-'. ]+")
     private String middleName;
     
     @NotBlank
     @Size(min = 1, max = 15)
-    @Pattern(regexp = "[A-Z][a-z]+")
+    @Pattern(regexp = "(?U)[\\\\p{Alpha}\\\\-'. ]+")
     private String lastName;
     
     @NotNull

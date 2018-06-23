@@ -35,7 +35,7 @@ public class IssueController {
      * @param issue
      * @return
      */
-	@RequestMapping(path= {"/issue/createIssue", "/issue/updateIssue"}, method=RequestMethod.GET)
+	@RequestMapping(path="/issue", method=RequestMethod.POST)
 	public Long createIssue(@ModelAttribute Issue issue) {
 		 issue = issueService.saveIssue(issue);
 		 return issue.getId();
@@ -47,7 +47,7 @@ public class IssueController {
 	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping("/issue/getIssue")
+	@RequestMapping(path="/issue", method=RequestMethod.GET)
 	public IssueDto getIssue(@RequestParam("id") Long id, Pageable pageable) {
 		return issueService.getIssue(id, pageable);
 	}
@@ -56,7 +56,7 @@ public class IssueController {
 	 * Deletes an issue for the given id.
 	 * @param id
 	 */
-	@RequestMapping("/issue/deleteIssue")
+	@RequestMapping(path="/issue", method=RequestMethod.DELETE)
 	public void deleteIssue(@RequestParam("id") Long id) {
 		issueService.deleteIssue(id);
 	}
@@ -69,7 +69,7 @@ public class IssueController {
 	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping(path="/issue/findIssues", params={"assigneeId", "reporterId", "status"})
+	@RequestMapping(path="/issue/findIssues", params={"assigneeId", "reporterId", "status"}, method=RequestMethod.GET)
 	public List<Issue> findIssues(@RequestParam Long assigneeId, @RequestParam Long reporterId, @RequestParam IssueStatus status, Pageable pageable) {
 		return issueService.findIssues(assigneeId, reporterId, status, pageable);
 	}
@@ -81,7 +81,7 @@ public class IssueController {
 	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping(path="/issue/findIssues", params={"startDate", "endDate"})
+	@RequestMapping(path="/issue/findIssues", params={"startDate", "endDate"}, method=RequestMethod.GET)
 	public List<Issue> findIssues(@RequestParam LocalDateTime startDate, @RequestParam LocalDateTime endDate, Pageable pageable) {
 		return issueService.findIssues(startDate, endDate, pageable);
 	}

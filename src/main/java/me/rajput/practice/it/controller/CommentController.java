@@ -30,17 +30,17 @@ public class CommentController {
 	@Autowired
 	private CommentService commentService;
 	
-	@RequestMapping(path= {"/comment/addComment", "/comment/editComment"}, method=RequestMethod.POST)
+	@RequestMapping(path= {"/comment", "/comment"}, method=RequestMethod.POST)
 	public Comment addComment(@Valid @ModelAttribute Comment comment) {
 		return commentService.writeComment(comment);
 	}
 	
-	@RequestMapping(path="/comment/getComments", params="issueId")
+	@RequestMapping(path="/comment", params="issueId", method=RequestMethod.GET)
 	public List<CommentDto> getCommentsByIssue(@RequestParam Long issueId, Pageable pageable) {
 		return commentService.getCommentDtosByIssueId(issueId, pageable);
 	}
 	
-	@RequestMapping("/comment/deleteComment")
+	@RequestMapping(path="/comment", method=RequestMethod.DELETE)
 	public void deleteComment(@RequestParam Long id) {
 		commentService.deleteComment(id);
 	}
