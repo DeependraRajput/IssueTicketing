@@ -3,9 +3,11 @@ package me.rajput.practice.it.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,7 +38,7 @@ public class IssueController {
      * @return
      */
 	@RequestMapping(path="/issue", method=RequestMethod.POST)
-	public Long createIssue(@ModelAttribute Issue issue) {
+	public Long createIssue(@Valid @RequestBody Issue issue) {
 		 issue = issueService.saveIssue(issue);
 		 return issue.getId();
 	}
@@ -50,15 +52,6 @@ public class IssueController {
 	@RequestMapping(path="/issue", method=RequestMethod.GET)
 	public IssueDto getIssue(@RequestParam("id") Long id, Pageable pageable) {
 		return issueService.getIssue(id, pageable);
-	}
-	
-	/**
-	 * Deletes an issue for the given id.
-	 * @param id
-	 */
-	@RequestMapping(path="/issue", method=RequestMethod.DELETE)
-	public void deleteIssue(@RequestParam("id") Long id) {
-		issueService.deleteIssue(id);
 	}
 	
 	/**
@@ -84,6 +77,15 @@ public class IssueController {
 	@RequestMapping(path="/issue/findIssues", params={"startDate", "endDate"}, method=RequestMethod.GET)
 	public List<Issue> findIssues(@RequestParam LocalDateTime startDate, @RequestParam LocalDateTime endDate, Pageable pageable) {
 		return issueService.findIssues(startDate, endDate, pageable);
+	}
+	
+	/**
+	 * Deletes an issue for the given id.
+	 * @param id
+	 */
+	@RequestMapping(path="/issue", method=RequestMethod.DELETE)
+	public void deleteIssue(@RequestParam("id") Long id) {
+		issueService.deleteIssue(id);
 	}
 
 }

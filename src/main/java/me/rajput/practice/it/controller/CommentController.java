@@ -6,7 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +31,7 @@ public class CommentController {
 	private CommentService commentService;
 	
 	@RequestMapping(path="/comment", method=RequestMethod.POST)
-	public Comment addComment(@Valid @ModelAttribute Comment comment) {
+	public Comment addComment(@Valid @RequestBody Comment comment) {
 		return commentService.writeComment(comment);
 	}
 	

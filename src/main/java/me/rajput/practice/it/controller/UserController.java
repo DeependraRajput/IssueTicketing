@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,7 +56,7 @@ public class UserController {
      * @return
      */
 	@RequestMapping(path="/user", method=RequestMethod.POST)
-	public User createUser(@Valid @ModelAttribute User newUser) {
+	public User createUser(@Valid @RequestBody User newUser) {
 		return service.addUser(newUser);
 	}
 
