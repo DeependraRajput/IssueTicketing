@@ -3,5 +3,5 @@
 3. Create separate forms for web input.
 4. Entity validation DOES NOT works on database stored values, hence can be stored from other system.
 5. Find, how to add a where clause statically in the entity table like done with XML conf to fetch from a common table for current application.
-6. How to keep the validations at one place for same data point across multiple classes like Issue, IssueDto and IssueForm.
-7. Correct the rest mapping methods once complete.
+6. How to keep the validations at one place for same data point across multiple classes like Issue, IssueDto and IssueForm. AOP is one trick. Filters is another. find more
+7. Correct the rest HTTP response code once complete.

@@ -88,28 +88,41 @@ public class UserServiceImpl implements UserService {
 		
 		LOGGER.info(user.getFirstName() + " " + user.getLastName() + "["+ user.getLoginId()+"] has successfully logged out of the system");
 	}
+	
+	/* (non-Javadoc)
+	 */
+	@Override
+	public User findById(Long id) {
+		Optional<User> userOp = userRepo.findById(id);
+		
+		if(!userOp.isPresent()) {
+			throw new IllegalArgumentException("Resource not available");
+		}
+		
+		return userOp.get();
+	}
 
 	/* (non-Javadoc)
 	 * @see me.rajput.practice.it.services.UserService#addUser(me.rajput.practice.it.model.User)
 	 */
 	@Override
-	public User addUser(User newUser) {
+	public Long saveUser(User user) {
 		
 		Assert.isTrue(isCurrentUserAdmin(), "Current user must be an Admin");
 		
-		Assert.notNull(newUser, "Details must not be null!");
-		Assert.notNull(newUser.getLoginId(), "Login Id must not be null!");
-		Assert.notNull(newUser.getFirstName(), "First name must not be null!");
-		Assert.notNull(newUser.getLastName(), "Last name must not be null!");
+		Assert.notNull(user, "Details must not be null!");
+		Assert.notNull(user.getLoginId(), "Login Id must not be null!");
+		Assert.notNull(user.getFirstName(), "First name must not be null!");
+		Assert.notNull(user.getLastName(), "Last name must not be null!");
 
-		if(newUser.getType() == null)
-			newUser.setType(UserType.USER);
+		if(user.getType() == null)
+			user.setType(UserType.USER);
 		
-		userRepo.save(newUser);
+		userRepo.save(user);
 		
-		LOGGER.info(newUser.getFirstName() + " " + newUser.getLastName() + "["+ newUser.getLoginId()+"] has successfully been added to the system");
+		LOGGER.info(user.getFirstName() + " " + user.getLastName() + "["+ user.getLoginId()+"] has successfully been added to the system");
 		
-		return newUser;
+		return user.getId();
 	}
 
 	/* (non-Javadoc)
@@ -121,9 +134,9 @@ public class UserServiceImpl implements UserService {
 		boolean isSuccess = false;
 		User actor = this.currentUser();
 		if(actor != null) {
-			User user = userRepo.findByLoginId(actor.getLoginId());
-			if(user != null) {
-				Optional<UserSecurity> userSec = secRepo.findById(user.getId());
+			Optional<User> userOp = userRepo.findById(actor.getId());
+			if(userOp.isPresent()) {
+				Optional<UserSecurity> userSec = secRepo.findById(userOp.get().getId());
 				if(!userSec.isPresent() || 
 						userSec.get().getPassword().equals(passwordManager.getEncryptedPassword(oldPassword))) {
 					if(passwordManager.checkPasswordStrength(newPassword)) {
@@ -136,7 +149,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 
-		LOGGER.info("Password change for {" + actor.getFirstName() + " " + actor.getLastName() + "["+ actor.getLoginId()+"]} has " + (isSuccess?"been successful":"failed"));
+		LOGGER.info("Password change for {firstName} {lastName} [{loginId}] has {result}", actor.getFirstName(), actor.getLastName(), actor.getLoginId(), (isSuccess?"been successful":"failed"));
 		
 		return isSuccess;
 	}
@@ -183,20 +196,20 @@ public class UserServiceImpl implements UserService {
 	 * @see me.rajput.practice.it.services.UserService#deleteUser(java.lang.String)
 	 */
 	@Override
-	public boolean deleteUser(String loginId) {
+	public boolean deleteUser(Long id) {
 		
 		Assert.isTrue(isCurrentUserAdmin(), "Current user must be an Admin");
 		
 		boolean isSuccess = false;
 		try {
-			User user = userRepo.findByLoginId(loginId);
-			if(user != null && user.getId() != null) {
-				userRepo.findByLoginId(loginId);
+			Optional<User> userOp = userRepo.findById(id);
+			if(userOp.isPresent()) {
+				userRepo.deleteById(id);
 				isSuccess = true;
-				LOGGER.error("User with Login Id ["+loginId+"] has been deleted successfully.");
+				LOGGER.error("User with Login Id [{id}] has been deleted successfully.", id);
 			}
 		} catch(Exception e) {
-			LOGGER.error("Unable to delete the user with Login Id ["+loginId+"]");
+			LOGGER.error("Unable to delete the user with Login Id [{id}]", id);
 		}
 		
 		return isSuccess;
@@ -257,7 +270,5 @@ public class UserServiceImpl implements UserService {
 	private boolean isCurrentUserAdmin() {
 		return currentUser() != null && UserType.ADMIN.equals(currentUser().getType());
 	}
-
-
 
 }

@@ -15,7 +15,7 @@ import me.rajput.practice.it.model.dto.UserDto;
  *
  */
 public interface UserService {
-
+	
 	/**
 	 * Logs in the user for provided loginId and password.
 	 * @param loginId
@@ -31,11 +31,18 @@ public interface UserService {
 	void logout();
 	
 	/**
-	 * Add a new user with the given attributes. (By Admin user only).
-	 * @param newUser
+	 * Find the user by id.
+	 * @param id
 	 * @return
 	 */
-	User addUser(User newUser);
+	User findById(Long id);
+	
+	/**
+	 * Saves a user with the given attributes. (By Admin user only).
+	 * @param user
+	 * @return
+	 */
+	Long saveUser(User user);
 	
 	/**
 	 * Reset the password of the currently logged in user.
@@ -57,7 +64,7 @@ public interface UserService {
 	 * @param loginId
 	 * @return
 	 */
-	boolean deleteUser(String loginId);
+	boolean deleteUser(Long id);
 	
 	/**
 	 * User user type of the user for given login id. (By Admin user only.)
