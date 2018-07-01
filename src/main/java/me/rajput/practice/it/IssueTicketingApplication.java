@@ -34,6 +34,7 @@ public class IssueTicketingApplication {
 //        return new BCryptPasswordEncoder();
 //    }
     
+    //Ignore tis bean for now.
     @Bean
     @SessionScope
     public User currentUser() {
