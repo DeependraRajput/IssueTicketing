@@ -2,9 +2,7 @@ package me.rajput.practice.it.services;
 
 import java.util.List;
 
-import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.db.User;
-import me.rajput.practice.it.model.dto.UserDto;
+import me.rajput.practice.it.domain.User;
 
 /**
  * 
@@ -14,7 +12,7 @@ import me.rajput.practice.it.model.dto.UserDto;
  * @date Jun 17, 2018
  *
  */
-public interface UserService {
+public interface UserService extends WebEntityService<User> {
 	
 	/**
 	 * Logs in the user for provided loginId and password.
@@ -29,20 +27,6 @@ public interface UserService {
 	 * @return
 	 */
 	void logout();
-	
-	/**
-	 * Find the user by id.
-	 * @param id
-	 * @return
-	 */
-	User findById(Long id);
-	
-	/**
-	 * Saves a user with the given attributes. (By Admin user only).
-	 * @param user
-	 * @return
-	 */
-	Long saveUser(User user);
 	
 	/**
 	 * Reset the password of the currently logged in user.
@@ -60,31 +44,9 @@ public interface UserService {
 	List<User> searchUsers(User user);
 	
 	/**
-	 * Delete the user for given login id. (By Admin user only.)
-	 * @param loginId
-	 * @return
-	 */
-	boolean deleteUser(Long id);
-	
-	/**
-	 * User user type of the user for given login id. (By Admin user only.)
-	 * @param loginId
-	 * @param type
-	 * @return
-	 */
-	boolean updateUserType(String loginId, UserType type);
-	
-	/**
 	 * Provided the current user of the session.
 	 * @return
 	 */
 	User currentUser();
-	
-	/**
-	 * Gets the User DTO by id.
-	 * @param id
-	 * @return
-	 */
-	UserDto getUserDtoById(Long id);
 	
 }

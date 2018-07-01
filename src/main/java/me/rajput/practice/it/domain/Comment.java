@@ -1,4 +1,4 @@
-package me.rajput.practice.it.model.db;
+package me.rajput.practice.it.domain;
 
 import java.time.LocalDateTime;
 
@@ -7,6 +7,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,28 +22,33 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import me.rajput.practice.it.model.WebEntity;
 
 /**
  * 
- * Description: Data model representing a comment on an issue in the database. 
+ * Description: Data model representing a comment on an issue in the application as per business. 
  * 
  * @author Deependra Rajput
  * @date Jun 14, 2018
  *
  */
 @Data
-@EqualsAndHashCode(of="id")
 @Entity
+@ToString(exclude="issue")	//To remove cyclic toString calls 
+@EqualsAndHashCode(of="id")
 @Table(name="COMMENT", schema="TICKETING")
 @EntityListeners(AuditingEntityListener.class)  //To automatically inject auditing values.
-public class Comment {
+public class Comment implements WebEntity {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@NotNull
-	private Long issueId;
+	@ManyToOne
+	@JoinColumn(name="issue_id")
+	private Issue issue;
 	
 	@NotBlank
 	@Size(min = 1, max = 4096)
@@ -50,7 +57,8 @@ public class Comment {
 	
 	@NotNull
 	@CreatedBy
-	private Long commentatorId; //Should use actual User by @ManyToOne mapping or not?
+	@ManyToOne
+	private User commentator;
 	
 	@NotNull
 	@CreatedDate

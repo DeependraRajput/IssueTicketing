@@ -1,14 +1,19 @@
-package me.rajput.practice.it.model.db;
+package me.rajput.practice.it.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,21 +27,23 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.rajput.practice.it.model.IssueStatus;
+import me.rajput.practice.it.model.WebEntity;
 
 /**
  * 
- * Description: Data model representing an issue in the database. 
+ * Description: Data model representing an issue in the application as per business. 
  * 
  * @author Deependra Rajput
  * @date Jun 14, 2018
  *
  */
+
 @Data
-@EqualsAndHashCode(of="id")
 @Entity
+@EqualsAndHashCode(of="id")
 @Table(name = "ISSUE", schema="TICKETING")
 @EntityListeners(AuditingEntityListener.class)
-public class Issue {
+public class Issue implements WebEntity {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,19 +61,24 @@ public class Issue {
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private IssueStatus status;
+	private IssueStatus status;		//Should be mapped by @Any.
 	
 	@NotNull
 	@CreatedBy
-	private Long reporterId;	//Should use User object by @ManyToOne mapping or not?
+	@ManyToOne
+	private User reporter;
 	
-	private Long assigneeId;  //Should use User object by @ManyToOne mapping or not?
+	@ManyToOne
+	private User assignee;
 	
 	@NotNull
 	@CreatedDate
-	//Java 8 LocalDateTime supported is for TIMESTAMP, hence @Temporal(TemporalType.TIMESTAMP) is not required.
 	private LocalDateTime createdAt;
 	
 	private LocalDateTime completedAt;
+	
+	//Bi-directional parent-child relationship. For collection, eager fetching is required.
+	@OneToMany(mappedBy="issue", fetch = FetchType.EAGER, cascade=CascadeType.REMOVE, orphanRemoval=true)
+	private List<Comment> comments;
 
 }

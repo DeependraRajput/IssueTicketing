@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import me.rajput.practice.it.model.db.Comment;
+import me.rajput.practice.it.domain.Comment;
 import me.rajput.practice.it.model.dto.CommentDto;
 
 /**
@@ -14,19 +14,7 @@ import me.rajput.practice.it.model.dto.CommentDto;
  * @date Jun 14, 2018
  *
  */
-public interface CommentService {
-	
-	/**
-	 * Add or update a comment to the issue.
-	 * @param coment
-	 */
-	Comment writeComment(Comment comment);
-	
-	/**
-	 * This will delete an existing comment.
-	 * @param commentId
-	 */
-	void deleteComment(Long commentId);
+public interface CommentService extends WebEntityService<Comment>{
 	
 	/**
 	 * Gets a list of all comments for an issue Id.

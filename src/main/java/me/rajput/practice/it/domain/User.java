@@ -1,4 +1,4 @@
-package me.rajput.practice.it.model.db;
+package me.rajput.practice.it.domain;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -25,10 +26,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.rajput.practice.it.model.UserType;
+import me.rajput.practice.it.model.WebEntity;
 
 /**
  * 
- * Description: Data model representing a user in the database, web and application. 
+ * Description: Data model representing a user in the application as per business. 
  * The class must be a business entity not a replica of database table. Use AttributeConverters for custom fields.
  * 
  * @author Deependra Rajput
@@ -36,11 +38,11 @@ import me.rajput.practice.it.model.UserType;
  *
  */
 @Data
-@EqualsAndHashCode(of="loginId") //Should be of the business equality not database id.
 @Entity
+@EqualsAndHashCode(of="loginId") //Should be of the business equality not database id.
 @Table(name = "USER", schema="TICKETING")
 @EntityListeners(AuditingEntityListener.class)
-public class User implements Cloneable {
+public class User implements WebEntity {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +53,7 @@ public class User implements Cloneable {
     @Column(unique = true)
     @Size(min = 1, max = 10)
 	@Pattern(regexp = "[a-z]+\\d*")
+    @JsonIgnore	//From web should take it as input only for the search.
 	private String loginId;
     
     @NotBlank
@@ -60,7 +63,7 @@ public class User implements Cloneable {
     
     @NotBlank
     @Size(min = 1, max = 15)
-    @Pattern(regexp = "(?U)[\\\\p{Alpha}\\\\-'. ]+")	//Support international names.
+    @Pattern(regexp = "(?U)[\\\\p{Alpha}\\\\-'. ]+")
     private String firstName;
     
     @Size(max = 15)
@@ -76,16 +79,25 @@ public class User implements Cloneable {
     @Enumerated(EnumType.STRING)
     private UserType type;
     
+	@JsonIgnore
+	private String password;
+	
+	@NotNull
+	@CreatedDate
+	@JsonIgnore
+	private LocalDateTime createdAt;
+	
     @NotNull
     @LastModifiedDate
+    @JsonIgnore
     private LocalDateTime updatedAt;
-    
-    @Override
-    public User clone() {
-    	try {
-			return (User)super.clone();
-		} catch (CloneNotSupportedException willNotOccur) {}
-		return null;
-    }
 
+	@Override
+	public String toString() {
+		return firstName + ((middleName==null)?"": " " + middleName)
+				+ " " + lastName + "[" + loginId + "]";
+	}
+
+    
+    
 }

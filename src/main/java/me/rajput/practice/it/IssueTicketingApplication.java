@@ -10,8 +10,8 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.context.annotation.SessionScope;
 
+import me.rajput.practice.it.domain.User;
 import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.db.User;
 import me.rajput.practice.it.services.auditing.ApplicationAuditorAware;
 
 @SpringBootApplication

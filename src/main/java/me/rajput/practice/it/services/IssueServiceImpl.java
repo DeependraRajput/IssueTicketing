@@ -3,7 +3,6 @@ package me.rajput.practice.it.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rajput.practice.it.domain.Issue;
+import me.rajput.practice.it.domain.User;
 import me.rajput.practice.it.exceptions.UnauthorizedOperationException;
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.db.Issue;
-import me.rajput.practice.it.model.db.User;
-import me.rajput.practice.it.model.dto.CommentDto;
 import me.rajput.practice.it.model.dto.IssueDto;
 import me.rajput.practice.it.repositories.IssueRepository;
 
@@ -37,65 +35,87 @@ public class IssueServiceImpl implements IssueService {
 	private ModelMapper modelMapper;
 
 	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.IssueService#saveIssue(me.rajput.practice.it.model.Issue)
+	 * @see me.rajput.practice.it.services.IssueService#save(me.rajput.practice.it.model.Issue)
 	 */
 	@Override
-	public Issue saveIssue(Issue issue) {
+	public Long create(Issue issue) {
 		User currentUser = userService.currentUser();
 		
 		if(currentUser == null) {
 			throw new UnauthorizedOperationException("Please login first"); 
 		}
 		
-		if(issue.getId() == null) {
-			issue.setStatus(IssueStatus.NEW);
-		} else if(!currentUser.getId().equals(issue.getReporterId())) {
-			throw new UnauthorizedOperationException("You are not the reporter of this issue.");
-		}
+		issue.setId(null);
+		issue.setStatus(IssueStatus.NEW);
 		
 		issue = issueRepo.save(issue);
 		
 		if(issue.getId() != null) {
-			LOGGER.info("New Issue has been saved properly with id ["+issue.getId()+"]");
+			LOGGER.info("New issue has been created with id ["+issue.getId()+"]");
+		}
+		
+		return issue.getId();
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.services.IssueService#save(me.rajput.practice.it.model.Issue)
+	 */
+	@Override
+	public Issue update(Issue issue) {
+		User currentUser = userService.currentUser();
+		
+		if(currentUser == null) {
+			throw new UnauthorizedOperationException("Please login first"); 
+		}
+		
+		Assert.notNull(issue.getId(), "Issue Id must not be null");
+		Assert.isTrue(!currentUser.getId().equals(issue.getReporter().getId()), "You are not the reporter of this issue.");
+		
+		//TODO:Protect the JsonIgnore properties.
+		
+		issue = issueRepo.save(issue);
+		
+		if(issue.getId() != null) {
+			LOGGER.info("Issue has been updated properly with id [{}]", issue.getId());
 		}
 		
 		return issue;
 	}
 
 	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.IssueService#deleteIssue(java.lang.Long)
+	 * @see me.rajput.practice.it.services.IssueService#deleteById(java.lang.Long)
 	 */
 	@Override
-	public void deleteIssue(Long issueId) {
+	public void deleteById(Long issueId) {
 		issueRepo.deleteById(issueId);
-		LOGGER.info("Issue with id ["+issueId+"] has been deleted properly.");
+		LOGGER.info("Issue with id [{}] has been deleted properly.", issueId);
 	}
 	
 	/* (non-Javadoc)
 	 * @see me.rajput.practice.it.services.IssueService#getIssue(java.lang.Long, org.springframework.data.domain.Pageable)
 	 */
 	@Override
-	public IssueDto getIssue(Long id, Pageable pageable) {
+	public IssueDto getDtoById(Long id, Pageable pageable) {
 		Optional<Issue> issueOp = issueRepo.findById(id);
 		
 		IssueDto issueDto = null;
-		if(issueOp.isPresent()) {
-			Issue issue = issueOp.get();
-			issueDto = modelMapper.map(issue, IssueDto.class);
-			issueDto.setReporter(userService.getUserDtoById(issue.getReporterId()));
-			if(issue.getAssigneeId() != null) {
-				issueDto.setAssignee(userService.getUserDtoById(issue.getAssigneeId()));
-			}
-			
-			issueDto.setComments(commentService.getCommentsByIssueId(issue.getId(), pageable)
-									.stream()
-									.map(c -> {
-										CommentDto dto = modelMapper.map(c, CommentDto.class);
-										dto.setCommentator(userService.getUserDtoById(c.getCommentatorId()));
-										return dto;
-									})
-									.collect(Collectors.toList()));
-		}
+//		if(issueOp.isPresent()) {
+//			Issue issue = issueOp.get();
+//			issueDto = modelMapper.map(issue, IssueDto.class);
+//			issueDto.setReporter(userService.getUserDtoById(issue.getReporterId()));
+//			if(issue.getAssigneeId() != null) {
+//				issueDto.setAssignee(userService.getUserDtoById(issue.getAssigneeId()));
+//			}
+//			
+//			issueDto.setComments(commentService.getCommentsByIssueId(issue.getId(), pageable)
+//									.stream()
+//									.map(c -> {
+//										CommentDto dto = modelMapper.map(c, CommentDto.class);
+//										dto.setCommentator(userService.getUserDtoById(c.getCommentatorId()));
+//										return dto;
+//									})
+//									.collect(Collectors.toList()));
+//		}
 		
 		return issueDto;
 	}
@@ -118,6 +138,11 @@ public class IssueServiceImpl implements IssueService {
 		Assert.notNull(endDate, "Etart date must not be blank");
 		return issueRepo.findIssueByCreatedAtBetween(startDate, endDate, pageable);
 	}
-	
+
+	@Override
+	public Issue getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

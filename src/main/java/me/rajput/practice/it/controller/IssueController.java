@@ -3,19 +3,20 @@ package me.rajput.practice.it.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import me.rajput.practice.it.domain.Issue;
 import me.rajput.practice.it.model.IssueStatus;
-import me.rajput.practice.it.model.db.Issue;
-import me.rajput.practice.it.model.dto.IssueDto;
+import me.rajput.practice.it.services.WebEntityService;
 import me.rajput.practice.it.services.IssueService;
 
 /**
@@ -27,31 +28,61 @@ import me.rajput.practice.it.services.IssueService;
  *
  */
 @RestController
-public class IssueController {
+public class IssueController extends BaseController<Issue> {
+	
+	/** URI mapping for this controller. */
+	private static final String URI_MAPPING = "/issue";
 	
 	@Autowired
 	private IssueService issueService;
 	
-    /**
-     * Create or update an issue.
-     * @param issue
-     * @return
-     */
-	@RequestMapping(path="/issue", method=RequestMethod.POST)
-	public Long createIssue(@Valid @RequestBody Issue issue) {
-		 issue = issueService.saveIssue(issue);
-		 return issue.getId();
+	/**
+	 * Default constructor.
+	 */
+	public IssueController() {
+		super(URI_MAPPING, "Issue");
 	}
 	
 	/**
-	 * Retrieves and issue based on it's id.
-	 * @param issue
-	 * @param pageable
+	 * Retrieves a issue based on it's id.
+	 * @param id
 	 * @return
 	 */
-	@RequestMapping(path="/issue", method=RequestMethod.GET)
-	public IssueDto getIssue(@RequestParam("id") Long id, Pageable pageable) {
-		return issueService.getIssue(id, pageable);
+	@RequestMapping(value = URI_MAPPING + ID_PARAM, method = RequestMethod.GET)
+	public ResponseEntity<?> getIssue(@PathVariable("id") Long id, Pageable pageable) {
+		return super.getEntity(id, pageable);
+	}
+
+	/**
+	 * Create a new issue.
+	 * @param issue
+	 * @param ucBuilder
+	 * @return the URI location of new issue.
+	 */
+	@RequestMapping(value = URI_MAPPING, method = RequestMethod.POST)
+	public ResponseEntity<?> createIssue(@RequestBody Issue issue, UriComponentsBuilder ucBuilder) {
+		return super.createEntity(issue, ucBuilder);
+	}
+
+	/**
+	 * Updates an existing issue.
+	 * @param id
+	 * @param issue
+	 * @return new values of updated issue.
+	 */
+	@RequestMapping(value = URI_MAPPING + ID_PARAM, method = RequestMethod.PUT)
+	public ResponseEntity<?> updateIssue(@PathVariable("id") Long id, @RequestBody Issue issue) {
+		return super.updateEntity(id, issue);
+	}
+
+	/**
+	 * Deletes an existing issue.
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = URI_MAPPING + ID_PARAM, method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteIssue(@PathVariable("id") Long id) {
+		return super.deleteEntity(id);
 	}
 	
 	/**
@@ -79,13 +110,12 @@ public class IssueController {
 		return issueService.findIssues(startDate, endDate, pageable);
 	}
 	
-	/**
-	 * Deletes an issue for the given id.
-	 * @param id
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.controller.IssueController#getEntityService()
 	 */
-	@RequestMapping(path="/issue", method=RequestMethod.DELETE)
-	public void deleteIssue(@RequestParam("id") Long id) {
-		issueService.deleteIssue(id);
+	@Override
+	protected WebEntityService<Issue> getEntityService() {
+		return this.issueService;
 	}
 
 }

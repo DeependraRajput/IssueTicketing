@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import me.rajput.practice.it.model.db.User;
+import me.rajput.practice.it.domain.User;
 
 public class UserControllerTest extends ControllerTestBase  {
 	

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import me.rajput.practice.it.model.db.User;
+import me.rajput.practice.it.domain.User;
 
 /**
  * 
@@ -17,20 +17,48 @@ import me.rajput.practice.it.model.db.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 	
 	/**
-	 * FInd the user by it's loginId.
+	 * Find the user by it's loginId.
 	 * @param loginId
 	 * @return
 	 */
-	User findByLoginId(String loginId);
+	User findUserByLoginId(String loginId);
 	
-	User findByEmail(String email);
+	/**
+	 * Find the user by it's email.
+	 * @param email
+	 * @return
+	 */
+	User findUserByEmail(String email);
 	
-	List<User> findByFirstName(String firstName);
+	/**
+	 * Find the user by it's first name.
+	 * @param firstName
+	 * @return
+	 */
+	List<User> findUserByFirstName(String firstName);
 	
-	List<User> findByLastName(String lastName);
+	/**
+	 * Find the user by it's last name.
+	 * @param lastName
+	 * @return
+	 */
+	List<User> findUserByLastName(String lastName);
 	
-	List<User> findByFirstNameAndLastName(String firstName, String lastName);
+	/**
+	 * Find the user by it's first name and last name.
+	 * @param firstName
+	 * @param lastName
+	 * @return
+	 */
+	List<User> findUserByFirstNameAndLastName(String firstName, String lastName);
 	
-	List<User> findByFirstNameAndMiddleNameAndLastName(String firstName, String middleName, String lastName);
+	/**
+	 * Find the user by it's first name, middle name and last name.
+	 * @param firstName
+	 * @param middleName
+	 * @param lastName
+	 * @return
+	 */
+	List<User> findUserByFirstNameAndMiddleNameAndLastName(String firstName, String middleName, String lastName);
 
 }

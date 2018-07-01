@@ -1,20 +1,18 @@
 package me.rajput.practice.it.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import me.rajput.practice.it.model.db.Comment;
-import me.rajput.practice.it.model.dto.CommentDto;
+import me.rajput.practice.it.domain.Comment;
 import me.rajput.practice.it.services.CommentService;
+import me.rajput.practice.it.services.WebEntityService;
 
 /**
  * 
@@ -25,24 +23,69 @@ import me.rajput.practice.it.services.CommentService;
  *
  */
 @RestController
-public class CommentController {
+public class CommentController  extends BaseController<Comment> {
+	
+	/** URI mapping for this controller. */
+	private static final String URI_MAPPING = "/comment";
 	
 	@Autowired
 	private CommentService commentService;
 	
-	@RequestMapping(path="/comment", method=RequestMethod.POST)
-	public Comment addComment(@Valid @RequestBody Comment comment) {
-		return commentService.writeComment(comment);
+	/**
+	 * Default constructor.
+	 */
+	public CommentController() {
+		super(URI_MAPPING, "Comment");
 	}
 	
-	@RequestMapping(path="/comment", method=RequestMethod.GET)
-	public List<CommentDto> getCommentsByIssue(@RequestParam Long issueId, Pageable pageable) {
-		return commentService.getCommentDtosByIssueId(issueId, pageable);
+	/**
+	 * Retrieves a comment based on it's id.
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = URI_MAPPING + ID_PARAM, method = RequestMethod.GET)
+	public ResponseEntity<?> getComment(@PathVariable("id") Long id, Pageable pageable) {
+		return super.getEntity(id, pageable);
+	}
+
+	/**
+	 * Create a new comment.
+	 * @param comment
+	 * @param ucBuilder
+	 * @return the URI location of new comment.
+	 */
+	@RequestMapping(value = URI_MAPPING, method = RequestMethod.POST)
+	public ResponseEntity<?> createComment(@RequestBody Comment comment, UriComponentsBuilder ucBuilder) {
+		return super.createEntity(comment, ucBuilder);
+	}
+
+	/**
+	 * Updates an existing comment.
+	 * @param id
+	 * @param comment
+	 * @return new values of updated comment.
+	 */
+	@RequestMapping(value = URI_MAPPING + ID_PARAM, method = RequestMethod.PUT)
+	public ResponseEntity<?> updateComment(@PathVariable("id") Long id, @RequestBody Comment comment) {
+		return super.updateEntity(id, comment);
+	}
+
+	/**
+	 * Deletes an existing comment.
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = URI_MAPPING + ID_PARAM, method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
+		return super.deleteEntity(id);
 	}
 	
-	@RequestMapping(path="/comment", method=RequestMethod.DELETE)
-	public void deleteComment(@RequestParam Long id) {
-		commentService.deleteComment(id);
+	/* (non-Javadoc)
+	 * @see me.rajput.practice.it.controller.CommentController#getEntityService()
+	 */
+	@Override
+	protected WebEntityService<Comment> getEntityService() {
+		return this.commentService;
 	}
 
 }
