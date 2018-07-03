@@ -1,9 +1,6 @@
 package me.rajput.practice.it.services;
 
-import org.springframework.data.domain.Pageable;
-
-import me.rajput.practice.it.model.WebEntity;
-import me.rajput.practice.it.model.dto.WebDto;
+import me.rajput.practice.it.domain.WebEntity;
 
 /**
  * 
@@ -43,13 +40,5 @@ public interface WebEntityService<T extends WebEntity> {
 	 * @return
 	 */
 	void deleteById(Long id);
-	
-	/**
-	 * Get the entity by the id.
-	 * @param id
-	 * @param pageable 
-	 * @return
-	 */
-	WebDto<T> getDtoById(Long id, Pageable pageable);
 
 }

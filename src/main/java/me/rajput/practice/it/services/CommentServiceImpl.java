@@ -3,7 +3,6 @@ package me.rajput.practice.it.services;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.modelmapper.ModelMapper;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rajput.practice.it.domain.Comment;
-import me.rajput.practice.it.model.dto.CommentDto;
 import me.rajput.practice.it.repositories.CommentRepository;
 
 /**
@@ -65,17 +63,6 @@ public class CommentServiceImpl implements CommentService {
 		repository.deleteById(id);
 		LOGGER.info("Comment with commentId [{}] has been deleted", id);
 	}
-
-	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.CommentService#getCommentDtosByIssue(java.lang.Long, org.springframework.data.domain.Pageable)
-	 */
-	@Override
-	public List<CommentDto> getCommentDtosByIssueId(Long issueId, Pageable pageable) {
-		return 		
-		this.getCommentsByIssueId(issueId, pageable)
-		.stream().map(c -> modelMapper.map(c, CommentDto.class))
-		.collect(Collectors.toList());
-	}
 	
 	/* (non-Javadoc)
 	 * @see me.rajput.practice.it.services.CommentService#getCommentsByIssue(java.lang.Long, org.springframework.data.domain.Pageable)
@@ -92,11 +79,6 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public Comment getById(Long id) {
 		return repository.findById(id).get();
-	}
-
-	@Override
-	public CommentDto getDtoById(Long id, Pageable pageable) {
-		return modelMapper.map(getById(id), CommentDto.class);
 	}
 
 }

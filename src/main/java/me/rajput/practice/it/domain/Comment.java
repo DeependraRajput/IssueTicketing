@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -23,7 +24,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import me.rajput.practice.it.model.WebEntity;
 
 /**
  * 
@@ -38,7 +38,8 @@ import me.rajput.practice.it.model.WebEntity;
 @ToString(exclude="issue")	//To remove cyclic toString calls 
 @EqualsAndHashCode(of="id")
 @Table(name="COMMENT", schema="TICKETING")
-@EntityListeners(AuditingEntityListener.class)  //To automatically inject auditing values.
+@EntityListeners(AuditingEntityListener.class)  //To automatically inject auditing values by Spring data JPA.
+@DynamicUpdate
 public class Comment implements WebEntity {
 	
 	@Id
@@ -61,11 +62,11 @@ public class Comment implements WebEntity {
 	private User commentator;
 	
 	@NotNull
-	@CreatedDate
+	@CreatedDate	//From Hibernate is: @CreationTimestamp
 	private LocalDateTime createdAt;
 	
 	@NotNull
-	@LastModifiedDate
+	@LastModifiedDate	//From Hibernate is: @UpdateTimestamp
 	private LocalDateTime lastModifiedAt;
 
 }

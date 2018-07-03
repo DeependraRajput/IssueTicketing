@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import me.rajput.practice.it.TestBase;
 import me.rajput.practice.it.domain.User;
-import me.rajput.practice.it.model.UserType;
+import me.rajput.practice.it.domain.UserType;
 import me.rajput.practice.it.services.UserService;
 
 @Transactional

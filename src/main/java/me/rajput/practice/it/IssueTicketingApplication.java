@@ -11,11 +11,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.context.annotation.SessionScope;
 
 import me.rajput.practice.it.domain.User;
-import me.rajput.practice.it.model.UserType;
+import me.rajput.practice.it.domain.UserType;
 import me.rajput.practice.it.services.auditing.ApplicationAuditorAware;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware") //, dateTimeProviderRef = "dateTimeProvider")
+//@EnableAspectJAutoProxy
 public class IssueTicketingApplication {
 
     public static void main(final String[] args) {
@@ -34,7 +35,7 @@ public class IssueTicketingApplication {
 //        return new BCryptPasswordEncoder();
 //    }
     
-    //Ignore tis bean for now.
+    //Ignore this bean for now.
     @Bean
     @SessionScope
     public User currentUser() {

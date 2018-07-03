@@ -1,4 +1,4 @@
-package me.rajput.practice.it.model;
+package me.rajput.practice.it.domain;
 
 /**
  * 

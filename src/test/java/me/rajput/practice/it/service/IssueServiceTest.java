@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import me.rajput.practice.it.TestBase;
 import me.rajput.practice.it.domain.Issue;
-import me.rajput.practice.it.model.IssueStatus;
+import me.rajput.practice.it.domain.IssueStatus;
 import me.rajput.practice.it.repositories.IssueRepository;
 import me.rajput.practice.it.services.IssueService;
 

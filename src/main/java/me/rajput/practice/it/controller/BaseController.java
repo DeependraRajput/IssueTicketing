@@ -9,12 +9,20 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.rajput.practice.it.domain.WebEntity;
 import me.rajput.practice.it.exceptions.ApplicationException;
 import me.rajput.practice.it.exceptions.ApplicationException.ErrorType;
-import me.rajput.practice.it.model.WebEntity;
-import me.rajput.practice.it.model.dto.WebDto;
 import me.rajput.practice.it.services.WebEntityService;
 
+/**
+ * 
+ * Description: Base class for REST controllers providing CRUD operations for entity controllers.
+ * 
+ * @author Deependra Rajput
+ * @date Jul 3, 2018
+ *
+ * @param <T>
+ */
 @Slf4j
 @AllArgsConstructor
 public abstract class BaseController<T extends WebEntity> {
@@ -40,8 +48,8 @@ public abstract class BaseController<T extends WebEntity> {
 		ResponseEntity<?> response = null;
 		try {
 			Assert.assertNotNull("Id must not be null", id);
-			WebDto<T> entity = this.getEntityService().getDtoById(id, pageable);
-			response = new ResponseEntity<WebDto<T>>(entity, HttpStatus.OK);
+			T entity = this.getEntityService().getById(id);
+			response = new ResponseEntity<T>(entity, HttpStatus.OK);
 			if (entity == null) {
 				LOGGER.error("{entityName} with id [{id}] not found.", entityName, id);
 				response = new ResponseEntity<>(new ApplicationException(ErrorType.READ_FAILURE,

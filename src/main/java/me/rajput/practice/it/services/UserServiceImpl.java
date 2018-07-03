@@ -12,16 +12,14 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rajput.practice.it.domain.User;
+import me.rajput.practice.it.domain.UserType;
 import me.rajput.practice.it.exceptions.LoginFailedException;
-import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.dto.UserDto;
 import me.rajput.practice.it.repositories.UserRepository;
 
 /**
@@ -233,22 +231,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User currentUser() {
 		return UserType.INVALID.equals(this.currentUser.getType())? null: this.currentUser;
-	}
-	
-	/* (non-Javadoc)
-	 * @see me.rajput.practice.it.services.UserService#gettoById(java.lang.Long, org.springframework.data.domain.Pageable)
-	 */
-	@Override
-	public UserDto getDtoById(Long id, Pageable pageable) {
-		
-		if(id == null) return null;
-		
-		Optional<User> userOp = userRepo.findById(id);
-		if(userOp.isPresent()) {
-			return modelMapper.map(userOp.get(), UserDto.class);
-		}
-		
-		return null;
 	}
 	
 	/**

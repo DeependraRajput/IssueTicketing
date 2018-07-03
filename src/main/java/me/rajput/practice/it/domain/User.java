@@ -17,6 +17,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.NaturalId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,8 +28,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.rajput.practice.it.model.UserType;
-import me.rajput.practice.it.model.WebEntity;
 
 /**
  * 
@@ -42,6 +43,7 @@ import me.rajput.practice.it.model.WebEntity;
 @EqualsAndHashCode(of="loginId") //Should be of the business equality not database id.
 @Table(name = "USER", schema="TICKETING")
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
 public class User implements WebEntity {
 	
     @Id
@@ -54,6 +56,7 @@ public class User implements WebEntity {
     @Size(min = 1, max = 10)
 	@Pattern(regexp = "[a-z]+\\d*")
     @JsonIgnore	//From web should take it as input only for the search.
+    @NaturalId
 	private String loginId;
     
     @NotBlank
@@ -77,6 +80,7 @@ public class User implements WebEntity {
     
     @NotNull
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("USER")		//Can't have Enum name since that is not a constant.
     private UserType type;
     
 	@JsonIgnore

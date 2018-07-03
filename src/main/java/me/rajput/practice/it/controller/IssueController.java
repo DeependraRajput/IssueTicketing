@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import me.rajput.practice.it.domain.Issue;
-import me.rajput.practice.it.model.IssueStatus;
+import me.rajput.practice.it.domain.IssueStatus;
 import me.rajput.practice.it.services.WebEntityService;
 import me.rajput.practice.it.services.IssueService;
 
